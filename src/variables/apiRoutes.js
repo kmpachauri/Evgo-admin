@@ -1,0 +1,33 @@
+const apiRoutes = {
+  dashboardDetails: '/api/v1/admin/user/dashboardDetails',
+  activeUsers: '/api/v1/admin/user/activeusers',
+  pendingUser: '/api/v1/admin/user/pendinguser',
+  suspendedUsers: '/api/v1/admin/user/suspended-users',
+  allUsers: '/api/v1/admin/user?page=1&limit=1000',
+  AllUsers: '/api/v1/admin/user?page=1&limit=1000',
+  allUsersPaged: (page = 1, limit = 1000, search = '') =>
+    `/api/v1/admin/user?page=${page}&limit=${limit}${search ? `&search=${encodeURIComponent(search)}` : ''}`,
+  userDetail: (userId) => `/api/v1/admin/users/${userId}/detail`,
+  recharges: '/api/v1/admin/recharges',
+  withdrawals: '/api/v1/admin/withdrawals',
+  plans: '/api/v1/admin/plans',
+  planById: (id) => `/api/v1/admin/plans/${id}`,
+  lotterySettings: '/api/v1/admin/lottery/settings',
+  lotteryHistory: '/api/v1/admin/lottery/history',
+  coupons: '/api/v1/admin/coupons',
+  couponRedeems: '/api/v1/admin/coupons/redeems',
+  tree: '/api/v1/admin/tree',
+  teamAnalytics: '/api/v1/admin/team/analytics',
+  incomeAnalytics: '/api/v1/admin/income/analytics',
+  dailyIncomeLogs: '/api/v1/admin/logs/daily-income',
+  loginActivity: '/api/v1/admin/login-activity',
+  systemSettings: '/api/v1/admin/settings/system',
+  purchaseBills: '/api/v1/admin/purchase-bills',
+  purchaseBillsAdd: '/api/v1/admin/purchase-bills/add',
+  banner: '/api/v1/admin/user/get-banner',
+  updateBanner: '/api/v1/admin/user/update-banner',
+  bonusHistory: '/api/v1/admin/user/bounus-history',
+  pairHistory: '/api/v1/admin/user/pair-history',
+}
+
+export default apiRoutes

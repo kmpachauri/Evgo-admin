@@ -1,0 +1,35 @@
+:root {
+  --sidebar-bg: #212631; /* White background */
+  --sidebar-color: #ffffff; /* Black text */
+}
+
+/* Sidebar container */
+.custom-sidebar {
+  /* background: var(--sidebar-bg) !important; */
+  color: var(--sidebar-color) !important;
+}
+
+/* Sidebar links and dropdowns */
+.custom-sidebar .c-sidebar-nav-link,
+.custom-sidebar .c-sidebar-nav-dropdown-toggle {
+  color: var(--sidebar-color) !important;
+}
+
+/* Hover state */
+.custom-sidebar .c-sidebar-nav-link:hover,
+.custom-sidebar .c-sidebar-nav-dropdown-toggle:hover {
+  background-color: #f2f2f2 !important;
+  color: var(--sidebar-color) !important;
+}
+
+/* Active state */
+.custom-sidebar .c-sidebar-nav-link.c-active,
+.custom-sidebar .c-sidebar-nav-dropdown-toggle.c-active {
+  background-color: #e6e6e6 !important;
+  color: var(--sidebar-color) !important;
+}
+
+/* Icons inside sidebar */
+.custom-sidebar .c-sidebar-nav-icon {
+  color: var(--sidebar-color) !important;
+}
