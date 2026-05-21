@@ -1,22 +1,25 @@
-import { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import useAuth from './useAuth';
-import useToastHandler from './useToastHandler';
-export const loginUrl = 'https://dhantag.com'
+import { useState, useEffect, useCallback } from 'react'
+import axios from 'axios'
+import Cookies from 'js-cookie'
+import useAuth from './useAuth'
+import useToastHandler from './useToastHandler'
+export const loginUrl = 'https://admin.evgo.site'
 
+export const baseUrl = 'https://node.evgo.site'
+export const imgBaseUrl = 'https://node.evgo.site'
 
-export const baseUrl = 'http://localhost:5000'
-export const imgBaseUrl = 'http://localhost:5000';
+// export const loginUrl = 'https://dhantag.com'
 
+// export const baseUrl = 'http://localhost:5000'
+// export const imgBaseUrl = 'http://localhost:5000'
 
 const useAxios = (initialConfig = {}, options = {}) => {
-  const { showToast } = useToastHandler();
-  const { manual = true } = options;
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const { token } = useAuth();
+  const { showToast } = useToastHandler()
+  const { manual = true } = options
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const { token } = useAuth()
 
   const axiosInstance = axios.create({
     baseURL: baseUrl,
@@ -26,7 +29,7 @@ const useAxios = (initialConfig = {}, options = {}) => {
       Authorization: `Bearer ${token}`,
       key: '5TIvw5cpc0',
     },
-  });
+  })
 
   const fetchData = useCallback(
     async ({
@@ -37,8 +40,8 @@ const useAxios = (initialConfig = {}, options = {}) => {
       showloader = true,
       toast = true,
     } = {}) => {
-      setLoading(true);
-      setError(null);
+      setLoading(true)
+      setError(null)
 
       try {
         const response = await axiosInstance({
@@ -47,57 +50,53 @@ const useAxios = (initialConfig = {}, options = {}) => {
           method: method || initialConfig.method,
           data: bodyData || initialConfig.data,
           headers: { ...initialConfig.headers, ...headers },
-        });
+        })
 
-        console.log(response.data);
+        console.log(response.data)
         const message =
-          response.data.message ||
-          response.data.msg ||
-          response.data.error ||
-          'Success';
+          response.data.message || response.data.msg || response.data.error || 'Success'
 
-        setData(response.data);
-        return response.data;
+        setData(response.data)
+        return response.data
       } catch (err) {
-        console.error(err);
+        console.error(err)
 
         // ✅ Handle 401 Unauthorized (token expired)
         if (err.response && err.response.status === 401) {
-          console.warn('Session expired. Redirecting to login...');
+          console.warn('Session expired. Redirecting to login...')
 
           // Clear all auth data
-          localStorage.removeItem('secureKeytoken');
-          localStorage.removeItem('SecureKeyLogged');
-          localStorage.removeItem('secureKeyuser');
-          localStorage.removeItem('AccessRole');
-          localStorage.removeItem('adminAsUser');
-          localStorage.removeItem('lastPath');
+          localStorage.removeItem('secureKeytoken')
+          localStorage.removeItem('SecureKeyLogged')
+          localStorage.removeItem('secureKeyuser')
+          localStorage.removeItem('AccessRole')
+          localStorage.removeItem('adminAsUser')
+          localStorage.removeItem('lastPath')
 
           // Force redirect (prevents back button from returning to protected pages)
-          window.location.replace('/login');
-          return;
+          window.location.replace('/login')
+          return
         }
 
         // ✅ Handle other errors normally
-        let msg =
-          err.response?.data?.message || err.message || 'An error occurred';
-        showToast(msg, 'error');
-        setError(msg);
-        throw err.response?.data;
+        let msg = err.response?.data?.message || err.message || 'An error occurred'
+        showToast(msg, 'error')
+        setError(msg)
+        throw err.response?.data
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     },
-    [initialConfig] // Depend only on the initial configuration
+    [initialConfig], // Depend only on the initial configuration
   );
 
   useEffect(() => {
     if (!manual && initialConfig.url) {
-      fetchData();
+      fetchData()
     }
-  }, [fetchData, manual]);
+  }, [fetchData, manual])
 
-  return { data, loading, error, fetchData };
-};
+  return { data, loading, error, fetchData }
+}
 
-export default useAxios;
+export default useAxios

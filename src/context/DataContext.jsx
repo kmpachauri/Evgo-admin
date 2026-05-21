@@ -76,10 +76,10 @@ const adminTabs = [
     ],
   },
   {
-    component: CNavGroup,
+    component: CNavItem,
     name: 'Reports',
     to: '/earnings-report',
-    icon: <CIcon icon={cilGraph} customClassName="nav-icon" />
+    icon: <CIcon icon={cilGraph} customClassName="nav-icon" />,
   },
   {
     component: CNavGroup,
