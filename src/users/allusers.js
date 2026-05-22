@@ -15,10 +15,6 @@ import {
   CCol,
   CSpinner,
   CButton,
-  CDropdown,
-  CDropdownToggle,
-  CDropdownMenu,
-  CDropdownItem,
 } from '@coreui/react'
 import useAxios from '../hooks/useAxios'
 import toast from 'react-hot-toast'
@@ -64,6 +60,40 @@ const AllUsers = () => {
   useEffect(() => {
     getUserLists()
   }, [])
+
+  const handleSuspendUser = async (userId) => {
+    try {
+      const res = await fetchData({
+        url: apiRoutes.updateUserStatus(userId),
+        method: 'PATCH',
+        data: { status: 'suspended' },
+      })
+
+      if (res?.success) {
+        toast.success('User suspended successfully')
+        getUserLists()
+      }
+    } catch (error) {
+      toast.error('Failed to suspend user')
+    }
+  }
+
+  const handleActivateUser = async (userId) => {
+    try {
+      const res = await fetchData({
+        url: apiRoutes.updateUserStatus(userId),
+        method: 'PATCH',
+        data: { status: 'active' },
+      })
+
+      if (res?.success) {
+        toast.success('User activated successfully')
+        getUserLists()
+      }
+    } catch (error) {
+      toast.error('Failed to activate user')
+    }
+  }
 
   const handleSearch = () => {
     let filteredList = [...userdata]
@@ -222,6 +252,7 @@ const AllUsers = () => {
                   <CTableHeaderCell>Total Income</CTableHeaderCell>
                   <CTableHeaderCell>Today Income</CTableHeaderCell>
                   <CTableHeaderCell>Action</CTableHeaderCell>
+                  <CTableHeaderCell>Manage</CTableHeaderCell>
                   <CTableHeaderCell>Date</CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
@@ -244,7 +275,7 @@ const AllUsers = () => {
                     <CTableDataCell>₹{Number(user.totalPlanAmount || 0).toFixed(2)}</CTableDataCell>
                     <CTableDataCell>₹{Number(user.totalIncome || 0).toFixed(2)}</CTableDataCell>
                     <CTableDataCell>₹{Number(user.todayIncome || 0).toFixed(2)}</CTableDataCell>
-                    <CTableDataCell className="d-flex gap-1">
+                    <CTableDataCell className="d-flex gap-1 flex-wrap">
                       <CButton
                         size="sm"
                         onClick={() => { setSelectedUserId(user.userId); setShowModal(true) }}
@@ -255,13 +286,32 @@ const AllUsers = () => {
                       >
                         Detail
                       </CButton>
-                      {/* <CButton
+                      {user.status === 'suspended' ? (
+                        <CButton
+                          size="sm"
+                          color="success"
+                          onClick={() => handleActivateUser(user.userId)}
+                        >
+                          Activate
+                        </CButton>
+                      ) : (
+                        <CButton
+                          size="sm"
+                          color="warning"
+                          onClick={() => handleSuspendUser(user.userId)}
+                        >
+                          Suspend
+                        </CButton>
+                      )}
+                    </CTableDataCell>
+                    <CTableDataCell>
+                      <CButton
                         size="sm"
                         color="secondary"
                         onClick={() => navigate(`/user/update/${user.userId}`, { state: { user } })}
                       >
                         Manage
-                      </CButton> */}
+                      </CButton>
                     </CTableDataCell>
                     <CTableDataCell>
                       {user.createdAt ? (

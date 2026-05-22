@@ -3,11 +3,13 @@ const apiRoutes = {
   activeUsers: '/api/v1/admin/user/activeusers',
   pendingUser: '/api/v1/admin/user/pendinguser',
   suspendedUsers: '/api/v1/admin/user/suspended-users',
+  blockedUsers: '/api/v1/admin/user/blocked-users',
   allUsers: '/api/v1/admin/user?page=1&limit=1000',
   AllUsers: '/api/v1/admin/user?page=1&limit=1000',
   allUsersPaged: (page = 1, limit = 1000, search = '') =>
     `/api/v1/admin/user?page=${page}&limit=${limit}${search ? `&search=${encodeURIComponent(search)}` : ''}`,
   userDetail: (userId) => `/api/v1/admin/users/${userId}/detail`,
+  updateUserStatus: (userId) => `/api/v1/admin/user/status/${userId}`,
   recharges: '/api/v1/admin/recharges',
   withdrawals: '/api/v1/admin/withdrawals',
   plans: '/api/v1/admin/plans',

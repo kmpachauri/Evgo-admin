@@ -32,7 +32,7 @@ const adminTabs = [
       { component: CNavItem, name: 'All Users', to: '/users-allusers' },
       { component: CNavItem, name: 'Active Users', to: '/active-users' },
       { component: CNavItem, name: 'Pending Users', to: '/pending/users' },
-      // { component: CNavItem, name: 'Suspended Users', to: '/suspended/users' },
+      { component: CNavItem, name: 'Suspended Users', to: '/suspended/users' },
     ],
   },
   {

@@ -3,6 +3,7 @@ import React from 'react'
 // User Management
 import allusers from './users/allusers'
 import activerusers from './users/activerusers'
+import BlockedUsers from './views/pages/member/BlockedUsers'
 import SuspendedUsers from './views/pages/member/SuspendedUsers'
 import PendingUsersWithFilter from './components/common/Table/DynamicTable'
 import Updateuser from './admin/Updateuser'
@@ -63,6 +64,7 @@ const routes = [
   { path: '/active-users', exact: true, name: 'Active Users', element: activerusers },
   { path: '/pending/users', name: 'Pending Users', element: PendingUsersWithFilter },
   { path: '/suspended/users', name: 'Suspended Users', element: SuspendedUsers },
+  { path: '/blocked/users', name: 'Blocked Users', element: BlockedUsers },
   { path: '/user/update/:userId', name: 'Update User', element: Updateuser },
 
   // MLM Operations

@@ -10,16 +10,10 @@ import {
   CTableRow,
   CTableHeaderCell,
   CTableDataCell,
-  CDropdown,
-  CDropdownToggle,
-  CDropdownMenu,
-  CDropdownItem,
 } from '@coreui/react'
 import useAxios from '../../../hooks/useAxios'
 import toast from 'react-hot-toast'
-import { useNavigate } from 'react-router-dom'
 import LoadingSpinner from '../../../components/common/LoadinSpinner'
-import useToastHandler from '../../../hooks/useToastHandler'
 import apiRoutes from '../../../variables/apiRoutes'
 import color from '../../color'
 import Export from '../../Export'
@@ -27,8 +21,6 @@ import UserDetailModal from '../../../users/UserDetailModal'
 
 const SuspendedUsers = () => {
   const { fetchData, loading } = useAxios()
-  const { showToast } = useToastHandler()
-  const navigate = useNavigate()
 
   const [users, setUsers] = useState([])
   const [filtered, setFiltered] = useState([])
@@ -63,9 +55,9 @@ const SuspendedUsers = () => {
   const activateUser = async (userId) => {
     try {
       const res = await fetchData({
-        url: `/api/v1/admin/user/unblockuser/${userId}`,
+        url: apiRoutes.updateUserStatus(userId),
         method: 'PATCH',
-        data: { status: false },
+        data: { status: 'active' },
       })
 
       if (res?.message) {
@@ -193,7 +185,6 @@ const SuspendedUsers = () => {
               <CTableHeaderCell>Sponsor</CTableHeaderCell>
               <CTableHeaderCell>Date</CTableHeaderCell>
               <CTableHeaderCell>Action</CTableHeaderCell>
-              <CTableHeaderCell>Manage</CTableHeaderCell>
             </CTableRow>
           </CTableHead>
           <CTableBody>
@@ -235,19 +226,6 @@ const SuspendedUsers = () => {
                       }}
                     >
                       Activate
-                    </CButton>
-                  </CTableDataCell>
-                  <CTableDataCell className="text-center">
-                    <CButton
-                      color="secondary"
-                      size="sm"
-                      onClick={() => navigate(`/user/update/${user.userId}`, { state: { user } })}
-                      style={{
-                        background: `linear-gradient(135deg, ${color.primary} 0%, ${color.accent} 50%, ${color.secondary} 100%)`,
-                        color: 'white',
-                      }}
-                    >
-                      Review
                     </CButton>
                   </CTableDataCell>
                 </CTableRow>

@@ -20,6 +20,7 @@ import {
 import useAxios from '../hooks/useAxios'
 import toast from 'react-hot-toast'
 import apiRoutes from '../variables/apiRoutes'
+import { useNavigate } from 'react-router-dom'
 import Export from '../views/Export'
 import color from '../views/color'
 import UserDetailModal from './UserDetailModal'
@@ -31,6 +32,7 @@ const ActiveUsers = () => {
   const [selectedUserId, setSelectedUserId] = useState(null)
   const [showModal, setShowModal] = useState(false)
   const { fetchData, loading } = useAxios()
+  const navigate = useNavigate()
   const itemsPerPage = 10
   const [filters, setFilters] = useState({
     search: '',
@@ -60,6 +62,23 @@ const ActiveUsers = () => {
   useEffect(() => {
     getActiveUsers()
   }, [])
+
+  const handleSuspendUser = async (userId) => {
+    try {
+      const res = await fetchData({
+        url: apiRoutes.updateUserStatus(userId),
+        method: 'PATCH',
+        data: { status: 'suspended' },
+      })
+
+      if (res?.success) {
+        toast.success('User suspended successfully')
+        getActiveUsers()
+      }
+    } catch (error) {
+      toast.error('Failed to suspend user')
+    }
+  }
 
   const handleSearch = () => {
     let filteredList = [...userdata]
@@ -245,12 +264,13 @@ const ActiveUsers = () => {
                   <CTableHeaderCell>Sponsor</CTableHeaderCell>
                   <CTableHeaderCell>Date</CTableHeaderCell>
                   <CTableHeaderCell>Action</CTableHeaderCell>
+                  <CTableHeaderCell>Manage</CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody>
                 {paginatedUsers.length === 0 ? (
                   <CTableRow>
-                    <CTableDataCell colSpan="8" className="text-center">
+                    <CTableDataCell colSpan="12" className="text-center">
                       No active users found
                     </CTableDataCell>
                   </CTableRow>
@@ -281,15 +301,33 @@ const ActiveUsers = () => {
                         )}
                       </CTableDataCell>
                       <CTableDataCell>
+                        <div className="d-flex gap-2 flex-wrap">
+                          <CButton
+                            size="sm"
+                            onClick={() => { setSelectedUserId(user.userId); setShowModal(true) }}
+                            style={{
+                              background: `linear-gradient(135deg, ${color.primary} 0%, ${color.accent} 50%, ${color.secondary} 100%)`,
+                              color: 'white',
+                            }}
+                          >
+                            Detail
+                          </CButton>
+                          <CButton
+                            size="sm"
+                            color="warning"
+                            onClick={() => handleSuspendUser(user.userId)}
+                          >
+                            Suspend
+                          </CButton>
+                        </div>
+                      </CTableDataCell>
+                      <CTableDataCell>
                         <CButton
                           size="sm"
-                          onClick={() => { setSelectedUserId(user.userId); setShowModal(true) }}
-                          style={{
-                            background: `linear-gradient(135deg, ${color.primary} 0%, ${color.accent} 50%, ${color.secondary} 100%)`,
-                            color: 'white',
-                          }}
+                          color="secondary"
+                          onClick={() => navigate(`/user/update/${user.userId}`, { state: { user, isActivated: true } })}
                         >
-                          Detail
+                          Manage
                         </CButton>
                       </CTableDataCell>
                     </CTableRow>

@@ -10,7 +10,7 @@ export const loginUrl =
 
 export const baseUrl =
   import.meta.env.VITE_API_BASE_URL ||
-  (isDev ? 'http://localhost:5010' : 'https://node.evgo.site')
+  (isDev ? 'http://localhost:5000' : 'https://node.evgo.site')
 
 export const imgBaseUrl =
   import.meta.env.VITE_IMAGE_BASE_URL || baseUrl

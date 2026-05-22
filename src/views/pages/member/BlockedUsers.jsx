@@ -13,17 +13,14 @@ import {
 } from '@coreui/react'
 import useAxios from '../../../hooks/useAxios'
 import toast from 'react-hot-toast'
-import { useNavigate } from 'react-router-dom'
 import LoadingSpinner from '../../../components/common/LoadinSpinner'
 import apiRoutes from '../../../variables/apiRoutes'
-import color from '../../../views/color'
-import Export from '../../../views/Export'
+import color from '../../color'
+import Export from '../../Export'
 import UserDetailModal from '../../../users/UserDetailModal'
 
-const PendingUsersWithFilter = () => {
+const BlockedUsers = () => {
   const { fetchData, loading } = useAxios()
-  const navigate = useNavigate()
-
   const [users, setUsers] = useState([])
   const [filtered, setFiltered] = useState([])
   const [selectedUserId, setSelectedUserId] = useState(null)
@@ -36,68 +33,49 @@ const PendingUsersWithFilter = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
 
-  const fetchPendingUsers = async () => {
+  const fetchBlockedUsers = async () => {
     try {
-      const res = await fetchData({ url: apiRoutes.pendingUser, method: 'get' })
-      if (res?.message) {
-        // console.log('manoj',res.pendingUsers)
-        setUsers(res.pendingUsers)
-        setFiltered(res.pendingUsers)
+      const res = await fetchData({ url: apiRoutes.blockedUsers })
+      if (res?.users) {
+        setUsers(res.users)
+        setFiltered(res.users)
       } else {
-        toast.error('No users found')
+        toast.error('No blocked users found')
       }
-    } catch (err) {
-      toast.error('Failed to fetch users')
+    } catch (error) {
+      toast.error('Failed to fetch blocked users')
     }
   }
 
   useEffect(() => {
-    fetchPendingUsers()
+    fetchBlockedUsers()
   }, [])
 
-  const handleSuspendUser = async (userId) => {
+  const handleUnblock = async (userId) => {
     try {
       const res = await fetchData({
         url: apiRoutes.updateUserStatus(userId),
         method: 'PATCH',
-        data: { status: 'suspended' },
+        data: { status: 'active' },
       })
 
       if (res?.success) {
-        toast.success('User suspended successfully')
-        fetchPendingUsers()
+        toast.success('User unblocked successfully')
+        fetchBlockedUsers()
       }
     } catch (error) {
-      toast.error('Failed to suspend user')
+      toast.error('Failed to unblock user')
     }
   }
 
   const handleSearch = () => {
     let filteredList = [...users]
 
-    // if (filters.userId) {
-    //   filteredList = filteredList.filter((user) =>
-    //     user.userId.toLowerCase().includes(filters.userId.toLowerCase().trim())
-    //   );
-    // }
-
-    // if (filters.name) {
-    //   filteredList = filteredList.filter((user) =>
-    //     user.name?.toLowerCase().includes(filters.name.toLowerCase().trim())
-    //   );
-    // }
-
     if (filters.search) {
       filteredList = filteredList.filter(
         (user) =>
           user.userId?.toLowerCase().includes(filters.search.toLowerCase().trim()) ||
           user.name?.toLowerCase().includes(filters.search.toLowerCase().trim()),
-      )
-    }
-
-    if (filters.name) {
-      filteredList = filteredList.filter((user) =>
-        user.name.toLowerCase().includes(filters.userId.toLowerCase().trim()),
       )
     }
 
@@ -110,11 +88,6 @@ const PendingUsersWithFilter = () => {
     if (filters.to) {
       filteredList = filteredList.filter((user) => new Date(user.createdAt) <= new Date(filters.to))
     }
-
-    // filteredList = filteredList.filter((user) =>
-    //   user.userId.toLowerCase().includes(filters.search.toLowerCase().trim()) ||
-    //   user.name.toLowerCase().includes(filters.search.toLowerCase().trim())
-    // );
 
     setFiltered(filteredList)
     setCurrentPage(1)
@@ -131,90 +104,10 @@ const PendingUsersWithFilter = () => {
   const currentItems = filtered.slice(indexOfFirst, indexOfLast)
   const totalPages = Math.ceil(filtered.length / itemsPerPage)
 
-  const renderPagination = () => {
-    const pages = []
-    const maxPageToShow = 5
-
-    if (totalPages <= 6) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(
-          <CButton
-            key={i}
-            size="sm"
-            color={i === currentPage ? 'dark' : 'light'}
-            className="me-1"
-            onClick={() => setCurrentPage(i)}
-          >
-            {i}
-          </CButton>,
-        )
-      }
-    } else {
-      pages.push(
-        <CButton
-          key={1}
-          size="sm"
-          color={currentPage === 1 ? 'dark' : 'light'}
-          className="me-1"
-          onClick={() => setCurrentPage(1)}
-        >
-          1
-        </CButton>,
-      )
-
-      if (currentPage > 3) {
-        pages.push(
-          <span key="dots1" className="mx-1">
-            ...
-          </span>,
-        )
-      }
-
-      const startPage = Math.max(2, currentPage - 1)
-      const endPage = Math.min(totalPages - 1, currentPage + 1)
-
-      for (let i = startPage; i <= endPage; i++) {
-        pages.push(
-          <CButton
-            key={i}
-            size="sm"
-            color={i === currentPage ? 'dark' : 'light'}
-            className="me-1"
-            onClick={() => setCurrentPage(i)}
-          >
-            {i}
-          </CButton>,
-        )
-      }
-
-      if (currentPage < totalPages - 2) {
-        pages.push(
-          <span key="dots2" className="mx-1">
-            ...
-          </span>,
-        )
-      }
-
-      pages.push(
-        <CButton
-          key={totalPages}
-          size="sm"
-          color={currentPage === totalPages ? 'dark' : 'light'}
-          className="me-1"
-          onClick={() => setCurrentPage(totalPages)}
-        >
-          {totalPages}
-        </CButton>,
-      )
-    }
-
-    return pages
-  }
-
   const fields = [
     { key: 'userId', label: 'User Id' },
     { key: 'name', label: 'Name' },
-    { key: 'phone', label: 'phone' },
+    { key: 'phone', label: 'Phone' },
     { key: 'walletBalance', label: 'Wallet Balance' },
     { key: 'totalPlanAmount', label: 'Total Plan Amount' },
     { key: 'totalIncome', label: 'Total Income' },
@@ -234,8 +127,8 @@ const PendingUsersWithFilter = () => {
       <CRow className="mb-3">
         <CCol md={3}>
           <CFormInput
-            label="UserId"
-            placeholder="Search by UserId , Name"
+            label="UserId / Name"
+            placeholder="Search by UserId or Name"
             value={filters.search}
             onChange={(e) => setFilters({ ...filters, search: e.target.value })}
           />
@@ -270,7 +163,6 @@ const PendingUsersWithFilter = () => {
           <CButton color="secondary" onClick={handleReset}>
             Reset
           </CButton>
-
           <Export userdata={users} fields={fields} />
         </CCol>
       </CRow>
@@ -290,14 +182,13 @@ const PendingUsersWithFilter = () => {
               <CTableHeaderCell>Sponsor</CTableHeaderCell>
               <CTableHeaderCell>Date</CTableHeaderCell>
               <CTableHeaderCell>Action</CTableHeaderCell>
-              <CTableHeaderCell>Review</CTableHeaderCell>
             </CTableRow>
           </CTableHead>
           <CTableBody>
             {currentItems.length === 0 ? (
               <CTableRow>
-                <CTableDataCell colSpan="12" className="text-center">
-                  No pending users found
+                <CTableDataCell colSpan="11" className="text-center">
+                  No blocked users found
                 </CTableDataCell>
               </CTableRow>
             ) : (
@@ -306,7 +197,7 @@ const PendingUsersWithFilter = () => {
                 return (
                   <CTableRow key={user._id}>
                     <CTableDataCell>{indexOfFirst + index + 1}</CTableDataCell>
-                    <CTableDataCell> {user.userId || 'N/A'}</CTableDataCell>
+                    <CTableDataCell>{user.userId || 'N/A'}</CTableDataCell>
                     <CTableDataCell>{user.name || 'N/A'}</CTableDataCell>
                     <CTableDataCell>{user.phone || 'N/A'}</CTableDataCell>
                     <CTableDataCell>{Number(user.walletBalance || 0).toFixed(2)}</CTableDataCell>
@@ -318,38 +209,23 @@ const PendingUsersWithFilter = () => {
                       {date.toLocaleDateString()} <br />
                       <small className="text-muted">{date.toLocaleTimeString() || 'N/A'}</small>
                     </CTableDataCell>
-                    <CTableDataCell className="text-center">
-                      <div className="d-flex gap-2 flex-wrap">
-                        <CButton
-                          size="sm"
-                          onClick={() => { setSelectedUserId(user.userId); setShowModal(true) }}
-                          style={{
-                            background: `linear-gradient(135deg, ${color.primary} 0%, ${color.accent} 50%, ${color.secondary} 100%)`,
-                            color: 'white',
-                          }}
-                        >
-                          Detail
-                        </CButton>
-                        <CButton
-                          size="sm"
-                          color="warning"
-                          onClick={() => handleSuspendUser(user.userId)}
-                        >
-                          Suspend
-                        </CButton>
-                      </div>
-                    </CTableDataCell>
-                    <CTableDataCell className="text-center">
+                    <CTableDataCell className="d-flex gap-2 flex-wrap">
                       <CButton
                         size="sm"
-                        color="secondary"
-                        onClick={() =>
-                          navigate(`/user/update/${user.userId}`, {
-                            state: { user, isActivated: false },
-                          })
-                        }
+                        onClick={() => { setSelectedUserId(user.userId); setShowModal(true) }}
+                        style={{
+                          background: `linear-gradient(135deg, ${color.primary} 0%, ${color.accent} 50%, ${color.secondary} 100%)`,
+                          color: 'white',
+                        }}
                       >
-                        Review
+                        Detail
+                      </CButton>
+                      <CButton
+                        color="success"
+                        size="sm"
+                        onClick={() => handleUnblock(user.userId)}
+                      >
+                        Unblock
                       </CButton>
                     </CTableDataCell>
                   </CTableRow>
@@ -360,16 +236,27 @@ const PendingUsersWithFilter = () => {
         </CTable>
       </div>
 
-      {/* Pagination Controls */}
       <div className="d-flex justify-content-between align-items-center mt-3">
         <div>
-          Showing {indexOfFirst + 1} to {Math.min(indexOfLast, filtered.length)} of{' '}
+          Showing {filtered.length === 0 ? 0 : indexOfFirst + 1} to {Math.min(indexOfLast, filtered.length)} of{' '}
           {filtered.length} entries
         </div>
-        <div>{renderPagination()}</div>
+        <div>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <CButton
+              key={i}
+              size="sm"
+              color={i + 1 === currentPage ? 'dark' : 'light'}
+              className="me-1"
+              onClick={() => setCurrentPage(i + 1)}
+            >
+              {i + 1}
+            </CButton>
+          ))}
+        </div>
       </div>
     </>
   )
 }
 
-export default PendingUsersWithFilter
+export default BlockedUsers
