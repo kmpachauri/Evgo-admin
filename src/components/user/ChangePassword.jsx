@@ -8,8 +8,11 @@ import {
   CCol,
   CForm,
   CFormInput,
+  CInputGroup,
+  CInputGroupText,
   CRow,
 } from '@coreui/react'
+import { FaEyeSlash, FaRegEye } from 'react-icons/fa'
 import Swal from 'sweetalert2'
 import useAxios from '../../hooks/useAxios'
 import useAuth from '../../hooks/useAuth'
@@ -22,11 +25,23 @@ const ChangePassword = () => {
     newPassword: '',
     confirmPassword: '',
   })
+  const [showPassword, setShowPassword] = useState({
+    currentPassword: false,
+    newPassword: false,
+    confirmPassword: false,
+  })
   const [error, setError] = useState('')
 
   const handleChange = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }))
     setError('')
+  }
+
+  const togglePasswordVisibility = (field) => {
+    setShowPassword((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }))
   }
 
   const handleSubmit = async (event) => {
@@ -49,7 +64,7 @@ const ChangePassword = () => {
 
     try {
       await fetchData({
-        url: '/api/v1/auth/change-password',
+        url: '/auth/change-password',
         method: 'POST',
         data: {
           currentPassword: form.currentPassword,
@@ -91,30 +106,53 @@ const ChangePassword = () => {
             {error ? <CAlert color="danger">{error}</CAlert> : null}
 
             <CForm onSubmit={handleSubmit}>
-              <CFormInput
-                type="password"
-                label="Current Password"
-                className="mb-3"
-                value={form.currentPassword}
-                onChange={(event) => handleChange('currentPassword', event.target.value)}
-                autoComplete="current-password"
-              />
-              <CFormInput
-                type="password"
-                label="New Password"
-                className="mb-3"
-                value={form.newPassword}
-                onChange={(event) => handleChange('newPassword', event.target.value)}
-                autoComplete="new-password"
-              />
-              <CFormInput
-                type="password"
-                label="Confirm Password"
-                className="mb-4"
-                value={form.confirmPassword}
-                onChange={(event) => handleChange('confirmPassword', event.target.value)}
-                autoComplete="new-password"
-              />
+              <label className="form-label">Current Password</label>
+              <CInputGroup className="mb-3">
+                <CFormInput
+                  type={showPassword.currentPassword ? 'text' : 'password'}
+                  value={form.currentPassword}
+                  onChange={(event) => handleChange('currentPassword', event.target.value)}
+                  autoComplete="current-password"
+                />
+                <CInputGroupText
+                  role="button"
+                  onClick={() => togglePasswordVisibility('currentPassword')}
+                >
+                  {showPassword.currentPassword ? <FaEyeSlash /> : <FaRegEye />}
+                </CInputGroupText>
+              </CInputGroup>
+
+              <label className="form-label">New Password</label>
+              <CInputGroup className="mb-3">
+                <CFormInput
+                  type={showPassword.newPassword ? 'text' : 'password'}
+                  value={form.newPassword}
+                  onChange={(event) => handleChange('newPassword', event.target.value)}
+                  autoComplete="new-password"
+                />
+                <CInputGroupText
+                  role="button"
+                  onClick={() => togglePasswordVisibility('newPassword')}
+                >
+                  {showPassword.newPassword ? <FaEyeSlash /> : <FaRegEye />}
+                </CInputGroupText>
+              </CInputGroup>
+
+              <label className="form-label">Confirm Password</label>
+              <CInputGroup className="mb-4">
+                <CFormInput
+                  type={showPassword.confirmPassword ? 'text' : 'password'}
+                  value={form.confirmPassword}
+                  onChange={(event) => handleChange('confirmPassword', event.target.value)}
+                  autoComplete="new-password"
+                />
+                <CInputGroupText
+                  role="button"
+                  onClick={() => togglePasswordVisibility('confirmPassword')}
+                >
+                  {showPassword.confirmPassword ? <FaEyeSlash /> : <FaRegEye />}
+                </CInputGroupText>
+              </CInputGroup>
 
               <CButton type="submit" color="primary" disabled={loading}>
                 {loading ? 'Updating...' : 'Update Password'}
