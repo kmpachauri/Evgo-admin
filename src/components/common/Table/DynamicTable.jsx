@@ -201,7 +201,6 @@ const PendingUsersWithFilter = () => {
   const fields = [
     { key: 'userId', label: 'User Id' },
     { key: 'name', label: 'Name' },
-    { key: 'email', label: 'Email' },
     { key: 'phone', label: 'phone' },
     { key: 'walletBalance', label: 'Wallet Balance' },
     { key: 'totalPlanAmount', label: 'Total Plan Amount' },

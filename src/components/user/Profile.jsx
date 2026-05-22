@@ -13,7 +13,7 @@ import {
   CButton
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
-import { cilUser, cilEnvelopeOpen, cilPhone, cilShieldAlt, cilCalendar, cilStar } from '@coreui/icons';
+import { cilUser, cilPhone, cilShieldAlt, cilCalendar, cilStar } from '@coreui/icons';
 import useAxios from '../../hooks/useAxios';
 
 const Profile = () => {
@@ -82,16 +82,6 @@ const Profile = () => {
               </CCol>
               <CCol md={9}>
                 <CListGroup>
-                  <CListGroupItem className="d-flex align-items-center">
-                    <CIcon icon={cilEnvelopeOpen} className="me-3 text-primary" />
-                    <div>
-                      <small className="text-muted">Email</small>
-                      <div>{profile.email}</div>
-                      <CBadge color={profile.isEmailVerified ? "success" : "warning"} className="mt-1">
-                        {profile.isEmailVerified ? "Verified" : "Not Verified"}
-                      </CBadge>
-                    </div>
-                  </CListGroupItem>
                   <CListGroupItem className="d-flex align-items-center">
                     <CIcon icon={cilPhone} className="me-3 text-primary" />
                     <div>
@@ -175,13 +165,6 @@ const Profile = () => {
                   Change Password
                 </CButton>
               </CCol>
-              {!profile.isEmailVerified && (
-                <CCol xs={12} className="mb-3">
-                  <CButton color="success" className="w-100">
-                    Verify Email
-                  </CButton>
-                </CCol>
-              )}
               {!profile.isPhoneVerified && profile.phone && (
                 <CCol xs={12}>
                   <CButton color="success" className="w-100">

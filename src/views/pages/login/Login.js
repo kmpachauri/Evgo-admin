@@ -145,8 +145,9 @@ const Login = () => {
 
       setError('')
     } catch (error) {
-      setError(error.error)
-      showToast(error.message || 'Login failed. Please try again.', 'error')
+      const message = error?.message || error?.error || 'Login failed. Please try again.'
+      setError(message)
+      showToast(message, 'error')
       console.log(error)
     } finally {
       setIsLoading(false)

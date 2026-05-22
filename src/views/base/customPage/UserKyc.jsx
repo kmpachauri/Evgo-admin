@@ -118,13 +118,11 @@ const UserKyc = () => {
       filteredList = filteredList.filter((user) => {
         const userId = user.user_id?.userId?.toLowerCase() || ""
         const userName = user.user_id?.name?.toLowerCase() || ""
-        const userEmail = user.user_id?.email?.toLowerCase() || ""
         const userPhone = String(user.user_id?.phone || "")
 
         return (
           userId.includes(searchText) ||
           userName.includes(searchText) ||
-          userEmail.includes(searchText) ||
           userPhone.includes(searchText)
         )
       })
@@ -188,7 +186,6 @@ const UserKyc = () => {
   const fields = [
     { key: (user) => user.user_id?.userId || 'N/A', label: 'User Id' },
     { key: (row) => row.user_id?.name || 'N/A', label: 'Name' },
-    { key: (row) => row.user_id?.email || 'N/A', label: 'Email' },
     { key: (row) => row.user_id?.phone || 'N/A', label: 'Phone' },
     { key: 'documentType', label: 'Document Type' },
     { key: 'documentNumber', label: 'Document Number' },
@@ -262,7 +259,6 @@ const UserKyc = () => {
                   <CTableHeaderCell>Sr. No</CTableHeaderCell>
                   <CTableHeaderCell>User Id</CTableHeaderCell>
                   <CTableHeaderCell>Name</CTableHeaderCell>
-                  <CTableHeaderCell>Email</CTableHeaderCell>
                   <CTableHeaderCell>Mobile No</CTableHeaderCell>
                   <CTableHeaderCell>Document Type</CTableHeaderCell>
                   <CTableHeaderCell>Document Number</CTableHeaderCell>
@@ -280,7 +276,6 @@ const UserKyc = () => {
                     {/* <CTableDataCell>{user.user_id.userId || 'N/A'}</CTableDataCell> */}
                     <CTableDataCell>{user.user_id?.userId || 'N/A'}</CTableDataCell>
                     <CTableDataCell>{user.user_id?.name || 'N/A'}</CTableDataCell>
-                    <CTableDataCell>{user.user_id?.email || 'N/A'}</CTableDataCell>
                     <CTableDataCell>{user.user_id?.phone || 'N/A'}</CTableDataCell>
                     <CTableDataCell>{user.documentType || 'N/A'}</CTableDataCell>
                     <CTableDataCell>{user.documentNumber || 'N/A'}</CTableDataCell>

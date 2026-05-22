@@ -26,7 +26,6 @@ const emptyForm = {
   userId: '',
   name: '',
   phone: '',
-  email: '',
   walletBalance: 0,
   password: '',
   isActivated: false,
@@ -57,7 +56,6 @@ export default function Updateuser() {
             userId: sourceUser.userId || '',
             name: sourceUser.name || '',
             phone: sourceUser.phone || '',
-            email: sourceUser.email || '',
             walletBalance: sourceUser.walletBalance || 0,
             password: '',
             isActivated: Boolean(sourceUser.isActivated),
@@ -110,7 +108,6 @@ export default function Updateuser() {
       userId: sourceUser.userId || '',
       name: sourceUser.name || '',
       phone: sourceUser.phone || '',
-      email: sourceUser.email || '',
       walletBalance: sourceUser.walletBalance || 0,
       password: '',
       isActivated: Boolean(sourceUser.isActivated),
@@ -156,16 +153,6 @@ export default function Updateuser() {
                   label="Mobile"
                   value={form.phone}
                   onChange={(e) => handleChange('phone', e.target.value)}
-                />
-              </CCol>
-            </CRow>
-
-            <CRow className="mb-3">
-              <CCol md={12}>
-                <CFormInput
-                  label="Email"
-                  value={form.email}
-                  onChange={(e) => handleChange('email', e.target.value)}
                 />
               </CCol>
             </CRow>

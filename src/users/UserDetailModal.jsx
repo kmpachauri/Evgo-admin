@@ -59,7 +59,6 @@ const UserDetailModal = ({ userId, visible, onClose }) => {
             <CRow className="mb-2">
               <CCol md={3}><strong>Name:</strong> {user.name || 'N/A'}</CCol>
               <CCol md={3}><strong>Phone:</strong> {user.phone || 'N/A'}</CCol>
-              <CCol md={3}><strong>Email:</strong> {user.email || 'N/A'}</CCol>
               <CCol md={3}><strong>Sponsor:</strong> {user.sponsorUserId || 'N/A'}</CCol>
             </CRow>
 

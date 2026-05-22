@@ -203,7 +203,6 @@ const SettingsTable = () => {
   const fields = [
     { key: "userId", label: "User Id" },
     { key: "name", label: "Name" },
-    { key: "email", label: "Email" },
     { key: "phone", label: "phone" },
     { key: "walletBalance", label: "Wallet Balance" },
     { key: "sponsor", label: "Sponsor" },
@@ -273,7 +272,6 @@ const SettingsTable = () => {
                 <CTableHeaderCell className="text-center">S.No.</CTableHeaderCell>
                 <CTableHeaderCell className="text-center">UserId</CTableHeaderCell>
                 <CTableHeaderCell className="text-center">Name</CTableHeaderCell>
-                <CTableHeaderCell className="text-center">Email</CTableHeaderCell>
                 <CTableHeaderCell className="text-center">Phone</CTableHeaderCell>
                 <CTableHeaderCell className="text-center">Wallet Balance</CTableHeaderCell>
                 {/* <CTableHeaderCell className="text-center">Earning</CTableHeaderCell> */}
@@ -294,7 +292,6 @@ const SettingsTable = () => {
                       <CTableDataCell className="text-center">{indexOfFirst + key + 1}</CTableDataCell>
                       <CTableDataCell className="text-center">{user?.userId || "N/A"}</CTableDataCell>
                       <CTableDataCell className="text-center">{user?.name || "N/A"}</CTableDataCell>
-                      <CTableDataCell className="text-center">{user?.email || "N/A"}</CTableDataCell>
                       <CTableDataCell className="text-center">{user?.phone || "N/A"}</CTableDataCell>
                       <CTableDataCell className="text-center">{Number(user?.walletBalance).toFixed(2) || 0}</CTableDataCell>
                       {/* <CTableDataCell className="text-center">{Number(user?.totalProfitEarned).toFixed(2) || 0}</CTableDataCell> */}

@@ -12,10 +12,10 @@ import useAxios from '../hooks/useAxios'
 import toast from 'react-hot-toast'
 
 const FIELDS = [
-  { key: 'telegram', label: 'Telegram Channel', placeholder: 'https://t.me/yourchannel' },
-  { key: 'whatsapp', label: 'Whatsapp Support', placeholder: 'https://wa.me/919999999999' },
-  { key: 'depositSupport', label: 'Deposit Support (Telegram)', placeholder: 'https://t.me/depositsupport' },
-  { key: 'withdrawalSupport', label: 'Withdrawal Support (Telegram)', placeholder: 'https://t.me/withdrawsupport' },
+  { key: 'telegram', label: 'Telegram Channel', placeholder: 'https://t.me/yourchannel or @yourchannel' },
+  { key: 'whatsapp', label: 'Whatsapp Support', placeholder: 'https://wa.me/919999999999 or 919999999999' },
+  { key: 'depositSupport', label: 'Deposit Support (Telegram)', placeholder: 'https://t.me/depositsupport or @depositsupport' },
+  { key: 'withdrawalSupport', label: 'Withdrawal Support (Telegram)', placeholder: 'https://t.me/withdrawsupport or @withdrawsupport' },
 ]
 
 export default function SocialLinks() {
@@ -41,6 +41,9 @@ export default function SocialLinks() {
     <CCard>
       <CCardHeader><strong>Social Links Settings</strong></CCardHeader>
       <CCardBody>
+        <p className="text-medium-emphasis">
+          Full link ya direct WhatsApp number / Telegram handle dono save kar sakte ho.
+        </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 500 }}>
           {FIELDS.map(({ key, label, placeholder }) => (
             <div key={key}>

@@ -177,7 +177,6 @@ const BankKYC = () => {
   const fields = [
     { key: '_id', label: 'User Id' },
     { key: row => row.user_id?.name || '', label: 'Name' },
-    { key: row => row.user_id?.email || '', label: 'Email' },
     { key: row => row.user_id?.phone || '', label: 'Phone' },
     { key: 'documentType', label: 'Document Type' },
     { key: 'documentNumber', label: 'Document Number' },
@@ -248,7 +247,6 @@ const BankKYC = () => {
                   <CTableHeaderCell>Sr. No</CTableHeaderCell>
                   <CTableHeaderCell>UserId</CTableHeaderCell>
                   <CTableHeaderCell>User Name</CTableHeaderCell>
-                  <CTableHeaderCell>Email</CTableHeaderCell>
                   <CTableHeaderCell>Mobile No</CTableHeaderCell>
                   <CTableHeaderCell>AccountHolder Name</CTableHeaderCell>
                   <CTableHeaderCell>Account Number</CTableHeaderCell>
@@ -269,7 +267,6 @@ const BankKYC = () => {
                     <CTableDataCell>{(currentPage - 1) * itemsPerPage + index + 1}</CTableDataCell>
                     <CTableDataCell>{user?.user_id?.userId || 'N/A'}</CTableDataCell>
                     <CTableDataCell>{user?.user_id?.name || 'N/A'}</CTableDataCell>
-                    <CTableDataCell>{user?.user_id?.email || 'N/A'}</CTableDataCell>
                     <CTableDataCell>{user?.user_id?.phone || 'N/A'}</CTableDataCell>
                     <CTableDataCell>{user?.accountHolderName || 'N/A'}</CTableDataCell>
                     <CTableDataCell>{user?.accountNumber || 'N/A'}</CTableDataCell>

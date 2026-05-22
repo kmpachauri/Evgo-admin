@@ -9,9 +9,11 @@ import {
   CDropdownToggle,
 } from '@coreui/react'
 import {
+  cilLockLocked,
   cilAccountLogout,
 } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
+import { useNavigate } from 'react-router-dom'
 
 import Swal from 'sweetalert2'
 import avatar8 from './../../assets/images/avatars/profile.png'
@@ -19,6 +21,7 @@ import useAuth from '../../hooks/useAuth'
 
 const AppHeaderDropdown = () => {
   const { logout } = useAuth()
+  const navigate = useNavigate()
 
   // 🔹 Logout confirmation handler
   const handleLogout = () => {
@@ -48,6 +51,13 @@ const AppHeaderDropdown = () => {
         <CDropdownHeader className="bg-body-secondary fw-semibold mb-2">
           Account
         </CDropdownHeader>
+
+        <CDropdownItem onClick={() => navigate('/user/change-password')} style={{ cursor: 'pointer' }}>
+          Change Password
+          <CIcon icon={cilLockLocked} className="ms-2" />
+        </CDropdownItem>
+
+        <CDropdownDivider />
 
         <CDropdownItem onClick={handleLogout} style={{ cursor: 'pointer' }}>
           Logout

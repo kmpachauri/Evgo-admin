@@ -44,6 +44,7 @@ const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 // User Dashboard & Profile
 const UserDashboard = React.lazy(() => import('./components/user/Dashboard'))
 const UserProfile = React.lazy(() => import('./components/user/Profile'))
+const ChangePassword = React.lazy(() => import('./components/user/ChangePassword'))
 
 // Manual Purchase Components
 const ManualPurchaseAdd = React.lazy(() => import('./components/manualPurchase/AddPurchase'))
@@ -105,6 +106,7 @@ const routes = [
   // Legacy embedded user pages kept for compatibility
   { path: '/user/dashBoard', name: 'User Dashboard', element: UserDashboard },
   { path: '/user/profile', name: 'User Profile', element: UserProfile },
+  { path: '/user/change-password', name: 'Change Password', element: ChangePassword },
 ]
 
 export default routes

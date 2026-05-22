@@ -120,7 +120,6 @@ function TopupApproved() {
   const fields = [
     { key: "userId", label: "User Id" },
     { key: "name", label: "Name" },
-    { key: "email", label: "Email" },
     { key: "amount", label: "Amount" },
     { key: "transactionId", label: "TransactionId" },
   ];
@@ -182,7 +181,6 @@ function TopupApproved() {
               <CTableHeaderCell>S.No</CTableHeaderCell>
               <CTableHeaderCell>User ID</CTableHeaderCell>
               <CTableHeaderCell>Name</CTableHeaderCell>
-              <CTableHeaderCell>Email</CTableHeaderCell>
               <CTableHeaderCell>Amount</CTableHeaderCell>
               <CTableHeaderCell>Date</CTableHeaderCell>
               <CTableHeaderCell>Status</CTableHeaderCell>
@@ -198,7 +196,6 @@ function TopupApproved() {
               <CTableDataCell>{indexOfFirst + index + 1}</CTableDataCell>
               <CTableDataCell>{item.userId || "N/A"}</CTableDataCell>
               <CTableDataCell>{item.name || "N/A"}</CTableDataCell>
-              <CTableDataCell>{item.email || "N/A"}</CTableDataCell>
               <CTableDataCell>{item.amount || "N/A"}</CTableDataCell>
                <CTableDataCell>
                 {item.processedAt
@@ -262,7 +259,7 @@ function TopupApproved() {
             ))
             ) : (
             <CTableRow>
-              <CTableDataCell colSpan="10" className="text-center text-muted">
+              <CTableDataCell colSpan="7" className="text-center text-muted">
                 No data found
               </CTableDataCell>
             </CTableRow>

@@ -108,12 +108,10 @@ function SuccessWithdrawals() {
   const fields = [
     { key: "userId", label: "User Id" },
     { key: "name", label: "Name" },
-    { key: "email", label: "Email" },
     { key: "amount", label: "Amount" },
     { key: "taxAmount", label: "Tax" },
     { key: "netAmount", label: "Net Payable" },
     { key: "status", label: "Status" },
-    { key: "upiId", label: "UPI Id" },
   ];
 
 
@@ -172,13 +170,11 @@ function SuccessWithdrawals() {
               <CTableHeaderCell>S.No</CTableHeaderCell>
               <CTableHeaderCell>User ID</CTableHeaderCell>
               <CTableHeaderCell>Name</CTableHeaderCell>
-              <CTableHeaderCell>Email</CTableHeaderCell>
               <CTableHeaderCell>Amount</CTableHeaderCell>
               <CTableHeaderCell>Tax (5%)</CTableHeaderCell>
               <CTableHeaderCell>Net Payable</CTableHeaderCell>
               <CTableHeaderCell>Date</CTableHeaderCell>
               <CTableHeaderCell>Status</CTableHeaderCell>
-              <CTableHeaderCell>UPI Id</CTableHeaderCell>
               <CTableHeaderCell>Account Number</CTableHeaderCell>
               <CTableHeaderCell>IFSC Code</CTableHeaderCell>
               <CTableHeaderCell>Bank Name</CTableHeaderCell>
@@ -194,7 +190,6 @@ function SuccessWithdrawals() {
                     <CTableDataCell>{indexOfFirst + index + 1}</CTableDataCell>
                     <CTableDataCell>{item.userId || "N/A"}</CTableDataCell>
                     <CTableDataCell>{item.name || "N/A"}</CTableDataCell>
-                    <CTableDataCell>{item.email || "N/A"}</CTableDataCell>
                     <CTableDataCell>₹{Number(item.amount || 0).toFixed(2)}</CTableDataCell>
                     <CTableDataCell>₹{Number(item.taxAmount || 0).toFixed(2)}</CTableDataCell>
                     <CTableDataCell>₹{Number(item.netAmount || 0).toFixed(2)}</CTableDataCell>
@@ -225,7 +220,6 @@ function SuccessWithdrawals() {
                       </span>
                     </CTableDataCell>
 
-                    <CTableDataCell>{item.upiId || "N/A"}</CTableDataCell>
                     <CTableDataCell>{item.accountNumber || "N/A"}</CTableDataCell>
                     <CTableDataCell>{item.ifscCode || "N/A"}</CTableDataCell>
                     <CTableDataCell>{item.bankName || "N/A"}</CTableDataCell>
@@ -235,7 +229,7 @@ function SuccessWithdrawals() {
                 ))
               ) : (
                 <CTableRow>
-                  <CTableDataCell colSpan="12" className="text-center text-muted">
+                  <CTableDataCell colSpan="11" className="text-center text-muted">
                     No data found
                   </CTableDataCell>
                 </CTableRow>

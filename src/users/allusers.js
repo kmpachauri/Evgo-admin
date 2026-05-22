@@ -137,7 +137,6 @@ const AllUsers = () => {
   const fields = [
     { key: 'userId', label: 'User Id' },
     { key: 'name', label: 'Name' },
-    { key: 'email', label: 'Email' },
     { key: 'phone', label: 'phone' },
     { key: 'status', label: 'status' },
     { key: 'walletBalance', label: 'walletBalance' },

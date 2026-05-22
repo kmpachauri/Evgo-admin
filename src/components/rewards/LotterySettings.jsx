@@ -16,6 +16,7 @@ import {
   CTableHead,
   CTableHeaderCell,
   CTableRow,
+  CFormText,
 } from '@coreui/react'
 import useAxios from '../../hooks/useAxios'
 
@@ -82,13 +83,16 @@ const LotterySettings = () => {
               checked={Boolean(form.enabled)}
               onChange={(e) => setForm((prev) => ({ ...prev, enabled: e.target.checked }))}
             />
+            <CFormText className="mb-3">
+              Direct sponsor gets the lottery chance when their referred user purchases and activates a plan.
+              Unclaimed chances expire automatically at 12:00 AM IST.
+            </CFormText>
 
             <CTable responsive striped>
               <CTableHead>
                 <CTableRow>
                   <CTableHeaderCell>Plan Price</CTableHeaderCell>
-                  <CTableHeaderCell>Min Reward</CTableHeaderCell>
-                  <CTableHeaderCell>Max Reward</CTableHeaderCell>
+                  <CTableHeaderCell>Fixed Reward</CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody>
@@ -96,10 +100,14 @@ const LotterySettings = () => {
                   <CTableRow key={plan.price}>
                     <CTableDataCell>₹ {plan.price}</CTableDataCell>
                     <CTableDataCell>
-                      <CFormInput type="number" value={plan.minAmount} onChange={(e) => updatePlan(index, 'minAmount', e.target.value)} />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <CFormInput type="number" value={plan.maxAmount} onChange={(e) => updatePlan(index, 'maxAmount', e.target.value)} />
+                      <CFormInput
+                        type="number"
+                        value={plan.maxAmount}
+                        onChange={(e) => {
+                          updatePlan(index, 'minAmount', e.target.value)
+                          updatePlan(index, 'maxAmount', e.target.value)
+                        }}
+                      />
                     </CTableDataCell>
                   </CTableRow>
                 ))}

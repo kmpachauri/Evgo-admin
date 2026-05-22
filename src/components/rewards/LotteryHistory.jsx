@@ -16,6 +16,7 @@ import {
 import useAxios from '../../hooks/useAxios'
 
 const formatCurrency = (value) => `₹${Number(value || 0).toFixed(2)}`
+const getRewardValue = (item) => item.rewardAmount || item.maxAmount || 0
 
 const LotteryHistory = () => {
   const { fetchData } = useAxios()
@@ -58,8 +59,8 @@ const LotteryHistory = () => {
               <CTableHead>
                 <CTableRow>
                   <CTableHeaderCell>User</CTableHeaderCell>
+                  <CTableHeaderCell>Referred User</CTableHeaderCell>
                   <CTableHeaderCell>Plan</CTableHeaderCell>
-                  <CTableHeaderCell>Range</CTableHeaderCell>
                   <CTableHeaderCell>Reward</CTableHeaderCell>
                   <CTableHeaderCell>Status</CTableHeaderCell>
                   <CTableHeaderCell>Date</CTableHeaderCell>
@@ -70,9 +71,9 @@ const LotteryHistory = () => {
                 {rows.map((item) => (
                   <CTableRow key={item._id}>
                     <CTableDataCell>{item.user?.userId}<br /><small>{item.user?.name}</small></CTableDataCell>
+                    <CTableDataCell>{item.sourceUser?.userId || '-'}<br /><small>{item.sourceUser?.name || '-'}</small></CTableDataCell>
                     <CTableDataCell>{item.planName}</CTableDataCell>
-                    <CTableDataCell>{formatCurrency(item.minAmount)} - {formatCurrency(item.maxAmount)}</CTableDataCell>
-                    <CTableDataCell>{item.status === 'claimed' ? formatCurrency(item.rewardAmount) : '-'}</CTableDataCell>
+                    <CTableDataCell>{formatCurrency(getRewardValue(item))}</CTableDataCell>
                     <CTableDataCell className="text-capitalize">{item.status}</CTableDataCell>
                     <CTableDataCell>{item.rewardDate ? new Date(item.rewardDate).toLocaleString('en-IN') : '-'}</CTableDataCell>
                     <CTableDataCell>{item.referenceNumber || '-'}</CTableDataCell>
