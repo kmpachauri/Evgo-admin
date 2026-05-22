@@ -33,6 +33,7 @@ const _nav = [
     component: CNavGroup,
     name: 'Users',
     to: '/users',
+    visible: true,
     icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
     items: [
       {
@@ -107,6 +108,7 @@ const _nav = [
     component: CNavGroup,
     name: 'Income',
     to: '/income',
+    visible: true,
     icon: <CIcon icon={cilMoney} customClassName="nav-icon" />,
     items: [
       {
@@ -130,6 +132,7 @@ const _nav = [
     component: CNavGroup,
     name: 'Deposits',
     to: '/deposits',
+    visible: true,
     icon: <CIcon icon={cilDollar} customClassName="nav-icon" />,
     items: [
       {
@@ -163,8 +166,14 @@ const _nav = [
     component: CNavGroup,
     name: 'Withdrawals',
     to: '/withdrawals',
+    visible: true,
     icon: <CIcon icon={cilWallet} customClassName="nav-icon" />,
     items: [
+      {
+        component: CNavItem,
+        name: 'All Withdrawals',
+        to: '/withdrawals',
+      },
       {
         component: CNavItem,
         name: 'Pending',
@@ -191,6 +200,7 @@ const _nav = [
     component: CNavGroup,
     name: 'KYC',
     to: '/kyc',
+    visible: true,
     icon: <CIcon icon={cilShieldAlt} customClassName="nav-icon" />,
     items: [
       {
@@ -214,6 +224,7 @@ const _nav = [
     component: CNavGroup,
     name: 'Settings',
     to: '/settings',
+    visible: true,
     icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
     items: [
       {

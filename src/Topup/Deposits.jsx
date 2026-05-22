@@ -9,14 +9,14 @@ import toast from 'react-hot-toast'
 import useAxios from '../hooks/useAxios'
 import color from '../views/color'
 
-const TABS = ['pending', 'approved', 'rejected']
+const TABS = ['all', 'pending', 'approved', 'rejected']
 
 export default function Deposits() {
   const { fetchData, loading } = useAxios()
-  const [activeTab, setActiveTab] = useState('pending')
-  const [allData, setAllData] = useState({ pending: [], approved: [], rejected: [] })
+  const [activeTab, setActiveTab] = useState('all')
+  const [allData, setAllData] = useState({ all: [], pending: [], approved: [], rejected: [] })
   const [filtered, setFiltered] = useState([])
-  const [search, setSearch] = useState('')
+  const [filters, setFilters] = useState({ search: '', from: '', to: '' })
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
 
@@ -25,6 +25,7 @@ export default function Deposits() {
       const res = await fetchData({ url: '/admin/recharges', method: 'GET' })
       const rows = res?.data || []
       setAllData({
+        all: rows,
         pending: rows.filter((r) => r.status === 'pending'),
         approved: rows.filter((r) => r.status === 'approved'),
         rejected: rows.filter((r) => r.status === 'rejected'),
@@ -38,16 +39,29 @@ export default function Deposits() {
 
   useEffect(() => {
     const list = allData[activeTab] || []
-    setFiltered(
-      search
-        ? list.filter((r) =>
-            r.user?.userId?.toLowerCase().includes(search.toLowerCase()) ||
-            r.utrNumber?.toLowerCase().includes(search.toLowerCase())
-          )
-        : list
-    )
+    let nextList = [...list]
+
+    if (filters.search) {
+      const needle = filters.search.toLowerCase()
+      nextList = nextList.filter(
+        (r) =>
+          r.user?.userId?.toLowerCase().includes(needle) ||
+          r.user?.name?.toLowerCase().includes(needle) ||
+          r.utrNumber?.toLowerCase().includes(needle),
+      )
+    }
+
+    if (filters.from) {
+      nextList = nextList.filter((r) => new Date(r.createdAt) >= new Date(filters.from))
+    }
+
+    if (filters.to) {
+      nextList = nextList.filter((r) => new Date(r.createdAt) <= new Date(filters.to))
+    }
+
+    setFiltered(nextList)
     setCurrentPage(1)
-  }, [activeTab, allData, search])
+  }, [activeTab, allData, filters])
 
   const handleApprove = (id) => {
     Swal.fire({
@@ -91,7 +105,7 @@ export default function Deposits() {
   const paginated = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
   const totalPages = Math.ceil(filtered.length / itemsPerPage)
 
-  const badgeColor = { pending: 'warning', approved: 'success', rejected: 'danger' }
+  const badgeColor = { all: 'secondary', pending: 'warning', approved: 'success', rejected: 'danger' }
 
   return (
     <CCard>
@@ -109,15 +123,37 @@ export default function Deposits() {
 
         {/* Search */}
         <CRow className="mb-3">
-          <CCol md={4}>
+          <CCol md={3}>
             <CFormInput
-              placeholder="Search by User ID or UTR"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              label="User ID / Name / UTR"
+              placeholder="Search history"
+              value={filters.search}
+              onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
             />
           </CCol>
-          <CCol md={2}>
-            <CButton color="secondary" onClick={() => setSearch('')}>Reset</CButton>
+          <CCol md={3}>
+            <CFormInput
+              type="date"
+              label="From Date"
+              value={filters.from}
+              onChange={(e) => setFilters((prev) => ({ ...prev, from: e.target.value }))}
+            />
+          </CCol>
+          <CCol md={3}>
+            <CFormInput
+              type="date"
+              label="To Date"
+              value={filters.to}
+              onChange={(e) => setFilters((prev) => ({ ...prev, to: e.target.value }))}
+            />
+          </CCol>
+          <CCol md={3} className="d-flex align-items-end">
+            <CButton
+              color="secondary"
+              onClick={() => setFilters({ search: '', from: '', to: '' })}
+            >
+              Reset
+            </CButton>
           </CCol>
         </CRow>
 
@@ -137,13 +173,12 @@ export default function Deposits() {
                 <CTableHeaderCell>Status</CTableHeaderCell>
                 <CTableHeaderCell>Date</CTableHeaderCell>
                 {activeTab === 'pending' && <CTableHeaderCell>Action</CTableHeaderCell>}
-                {activeTab === 'rejected' && <CTableHeaderCell>Remark</CTableHeaderCell>}
               </CTableRow>
             </CTableHead>
             <CTableBody>
               {paginated.length === 0 ? (
                 <CTableRow>
-                  <CTableDataCell colSpan={10} className="text-center text-muted py-4">
+                  <CTableDataCell colSpan={activeTab === 'pending' ? 10 : 9} className="text-center text-muted py-4">
                     No {activeTab} deposits found
                   </CTableDataCell>
                 </CTableRow>
@@ -165,12 +200,22 @@ export default function Deposits() {
                   </CTableDataCell>
                   {activeTab === 'pending' && (
                     <CTableDataCell>
-                      <CButton size="sm" color="success" className="me-1" onClick={() => handleApprove(row._id)}>Approve</CButton>
-                      <CButton size="sm" color="danger" onClick={() => handleReject(row._id)}>Reject</CButton>
+                      <CButton
+                        size="sm"
+                        color="success"
+                        className="me-1"
+                        onClick={() => handleApprove(row._id)}
+                      >
+                        Approve
+                      </CButton>
+                      <CButton
+                        size="sm"
+                        color="danger"
+                        onClick={() => handleReject(row._id)}
+                      >
+                        Reject
+                      </CButton>
                     </CTableDataCell>
-                  )}
-                  {activeTab === 'rejected' && (
-                    <CTableDataCell>{row.remark || '-'}</CTableDataCell>
                   )}
                 </CTableRow>
               ))}

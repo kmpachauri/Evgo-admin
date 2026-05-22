@@ -30,7 +30,6 @@ const AppSidebar = () => {
   useEffect(() => {
     getAllLists()
   }, [])
-  console.log(unfoldable)
   return (
     <CSidebar
       className="border-end custom-sidebar"

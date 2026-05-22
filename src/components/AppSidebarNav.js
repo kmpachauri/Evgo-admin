@@ -67,7 +67,14 @@ export const AppSidebarNav = ({ items }) => {
     const { component, name, icon, items, ...rest } = item
     const Component = component
     return (
-      <Component compact as="div" key={index} toggler={navLink(name, icon)} {...rest}>
+      <Component
+        compact
+        as="div"
+        key={index}
+        toggler={navLink(name, icon)}
+        visible={rest.visible ?? true}
+        {...rest}
+      >
         {items?.map((item, index) =>
           item.items ? navGroup(item, index) : navItem(item, index, true)
         )}

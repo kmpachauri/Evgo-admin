@@ -27,6 +27,7 @@ const adminTabs = [
     component: CNavGroup,
     name: 'Users',
     to: '/users',
+    visible: true,
     icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
     items: [
       { component: CNavItem, name: 'All Users', to: '/users-allusers' },
@@ -39,6 +40,7 @@ const adminTabs = [
     component: CNavGroup,
     name: 'Deposits',
     to: '/deposits',
+    visible: true,
     icon: <CIcon icon={cilDollar} customClassName="nav-icon" />,
     items: [
       { component: CNavItem, name: 'All Deposits', to: '/deposits' },
@@ -51,8 +53,10 @@ const adminTabs = [
     component: CNavGroup,
     name: 'Withdrawals',
     to: '/withdrawals',
+    visible: true,
     icon: <CIcon icon={cilWallet} customClassName="nav-icon" />,
     items: [
+      { component: CNavItem, name: 'All Withdrawals', to: '/withdrawals' },
       { component: CNavItem, name: 'Pending', to: '/pending-withDrawals' },
       { component: CNavItem, name: 'Approved', to: '/success-withdrawals' },
       { component: CNavItem, name: 'Rejected', to: '/rejected-withdrawals' },
@@ -68,6 +72,7 @@ const adminTabs = [
     component: CNavGroup,
     name: 'Plans & Rewards',
     to: '/plans-rewards',
+    visible: true,
     icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
     items: [
       // { component: CNavItem, name: 'Plan Management', to: '/plans/manage' },
@@ -85,6 +90,7 @@ const adminTabs = [
     component: CNavGroup,
     name: 'Settings',
     to: '/settings',
+    visible: true,
     icon: <CIcon icon={cilSettings} customClassName="nav-icon" />,
     items: [
       { component: CNavItem, name: 'Payment Settings', to: '/payment-create' },

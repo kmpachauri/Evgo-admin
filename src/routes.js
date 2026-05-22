@@ -26,6 +26,7 @@ import PlanManagement from './components/plans/PlanManagement'
 import PendingWithdrawals from './Withdrawals/PendingWithdrawals'
 import SuccessWithdrawals from './Withdrawals/SuccessWithdrawals'
 import WithdrawalsRejected from './Withdrawals/WithdrawalsRejected'
+import AllWithdrawals from './Withdrawals/AllWithdrawals'
 import TopupPending from './Topup/TopupPending'
 import TopupApproved from './Topup/TopupApproved'
 import TopupRejected from './Topup/TopupRejected'
@@ -94,6 +95,7 @@ const routes = [
   { path: '/level-users/:level', name: 'Level Users', element: levelUsers },
 
   // Withdrawals
+  { path: '/withdrawals', name: 'All Withdrawals', element: AllWithdrawals },
   { path: '/pending-withDrawals', name: 'Pending Withdrawals', element: PendingWithdrawals },
   { path: '/success-withdrawals', name: 'Approved Withdrawals', element: SuccessWithdrawals },
   { path: '/rejected-withdrawals', name: 'Rejected Withdrawals', element: WithdrawalsRejected },

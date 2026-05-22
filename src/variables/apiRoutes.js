@@ -10,6 +10,8 @@ const apiRoutes = {
     `/api/v1/admin/user?page=${page}&limit=${limit}${search ? `&search=${encodeURIComponent(search)}` : ''}`,
   userDetail: (userId) => `/api/v1/admin/users/${userId}/detail`,
   updateUserStatus: (userId) => `/api/v1/admin/user/status/${userId}`,
+  addUserRecharge: (userId) => `/api/v1/admin/user/add-recharge/${userId}`,
+  deductUserWallet: (userId) => `/api/v1/admin/user/deduct-wallet/${userId}`,
   recharges: '/api/v1/admin/recharges',
   withdrawals: '/api/v1/admin/withdrawals',
   plans: '/api/v1/admin/plans',

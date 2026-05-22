@@ -41,12 +41,6 @@ function PendingWithdrawals() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const [screenshotModal, setScreenshotModal] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
-
-  // helper function to normalize path
-  const normalizePath = (path) => path?.replace(/\\/g, "/");
-
   // ✅ Fetch list
   const fetchWithdrawals = async () => {
     try {
@@ -144,7 +138,8 @@ function PendingWithdrawals() {
 
     if (filters.userId) {
       filteredList = filteredList.filter((item) =>
-        item.userId.toLowerCase().includes(filters.userId.toLowerCase())
+        item.userId?.toLowerCase().includes(filters.userId.toLowerCase()) ||
+        item.name?.toLowerCase().includes(filters.userId.toLowerCase())
       );
     }
 
@@ -196,8 +191,8 @@ function PendingWithdrawals() {
       <CRow className="mb-3">
         <CCol md={3}>
           <CFormInput
-            label="userId"
-            placeholder="Enter userId"
+            label="User ID / Name"
+            placeholder="Search history"
             value={filters.userId}
             onChange={(e) => setFilters({ ...filters, userId: e.target.value })}
           />
@@ -251,8 +246,6 @@ function PendingWithdrawals() {
               <CTableHeaderCell>Account Number</CTableHeaderCell>
               <CTableHeaderCell>IFSC Code</CTableHeaderCell>
               <CTableHeaderCell>Bank Name</CTableHeaderCell>
-   
-              <CTableHeaderCell>Remark</CTableHeaderCell>
               <CTableHeaderCell>Action</CTableHeaderCell>
             </CTableRow>
           </CTableHead>
@@ -299,8 +292,6 @@ function PendingWithdrawals() {
                     <CTableDataCell>{item.accountNumber || "N/A"}</CTableDataCell>
                     <CTableDataCell>{item.ifscCode || "N/A"}</CTableDataCell>
                     <CTableDataCell>{item.bankName || "N/A"}</CTableDataCell>
-                  
-                    <CTableDataCell>{item.remark || "Approved"}</CTableDataCell>
 
                     {/* ✅ Action buttons */}
                     <CTableDataCell>
@@ -336,31 +327,6 @@ function PendingWithdrawals() {
           </CTableBody>
         </CTable>
       </div>
-
-      {/* Modal for large image */}
-      <CModal
-        visible={screenshotModal}
-        onClose={() => setScreenshotModal(false)}
-        size="lg"
-      >
-        <CModalHeader>
-          <CModalTitle>Preview Image</CModalTitle>
-        </CModalHeader>
-        <CModalBody className="text-center">
-          {selectedImage && (
-            <img
-              src={selectedImage}
-              alt="Preview"
-              style={{ maxWidth: '100%', maxHeight: '80vh', borderRadius: '10px' }}
-            />
-          )}
-        </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" onClick={() => setScreenshotModal(false)}>
-            Close
-          </CButton>
-        </CModalFooter>
-      </CModal>
 
       {/* Pagination */}
       <div className="d-flex justify-content-between align-items-center mt-3">

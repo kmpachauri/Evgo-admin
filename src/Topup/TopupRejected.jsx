@@ -21,7 +21,7 @@ import {
   CDropdownItem
 } from '@coreui/react';
 import toast from 'react-hot-toast';
-import useAxios, { imgBaseUrl } from '../hooks/useAxios';
+import useAxios from '../hooks/useAxios';
 import LoadingSpinner from '../components/common/LoadinSpinner';
 import Swal from 'sweetalert2';
 import { exportToExcel, exportToPDF, exportToWordPress } from '../help/DownloadFiles';
@@ -38,41 +38,26 @@ function TopupRejected() {
     from: '',
     to: '',
   });
-  const [filterText, setFilterText] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-
-  const [screenshotModal, setScreenshotModal] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
-
-  // helper function to normalize path
-  const normalizePath = (path) => path?.replace(/\\/g, "/");
 
   // ✅ Fetch list
   const fetchTopups = async () => {
     try {
-      const res = await fetchData({ url: '/api/v1/user/auth/topup-get' });
-      if (res?.data) {
-        setTopups(res.data);
-        setFiltered(res.data);
-      } else {
-        toast.error('No withdraw history found');
-      }
+      const res = await fetchData({ url: '/admin/recharges?status=rejected' });
+      const rows = res?.data || [];
+      const rejectedTopups = rows.map((item) => ({
+        ...item,
+        userId: item.user?.userId || 'N/A',
+        name: item.user?.name || 'N/A',
+        transactionId: item.utrNumber || '',
+        processedAt: item.approvedAt || item.updatedAt || item.createdAt,
+      }));
 
-      if (res?.data) {
-        // agar array directly res.data me hai
-        const rejectedTopups = (Array.isArray(res.data) ? res.data : res.data.data || [])
-          .filter(item => item.status === 'rejected');
-
-        console.log("Rejected Topups:", rejectedTopups);
-
-        setTopups(rejectedTopups);
-        setFiltered(rejectedTopups);
-      } else {
-        toast.error('No withdraw history found');
-      }
+      setTopups(rejectedTopups);
+      setFiltered(rejectedTopups);
     } catch (err) {
-      toast.error('Failed to fetch withdraw history');
+      toast.error('Failed to fetch deposit history');
     }
   };
 
@@ -95,7 +80,7 @@ function TopupRejected() {
       if (result.isConfirmed) {
         try {
           const res = await fetchData({
-            url: `/api/v1/user/auth/topup/${id}/approve`,
+            url: `/admin/recharges/${id}/approve`,
             method: "PUT",
           });
           if (res?.success) {
@@ -132,7 +117,7 @@ function TopupRejected() {
     if (remark) {
       try {
         const res = await fetchData({
-          url: `/api/v1/user/auth/topup/${id}/reject`,
+          url: `/admin/recharges/${id}/reject`,
           method: "PUT",
           data: { remark },
         });
@@ -194,8 +179,9 @@ function TopupRejected() {
     { key: "userId", label: "User Id" },
     { key: "name", label: "Name" },
     { key: "amount", label: "Amount" },
-    { key: "transactionId", label: "TransactionId" },
-    { key: "remark", label: "Remark" },
+    { key: "transactionId", label: "UTR Number" },
+    { key: "paymentMethod", label: "Method" },
+    { key: "planName", label: "Plan" },
   ];
 
 
@@ -256,10 +242,11 @@ function TopupRejected() {
               <CTableHeaderCell>User ID</CTableHeaderCell>
               <CTableHeaderCell>Name</CTableHeaderCell>
               <CTableHeaderCell>Amount</CTableHeaderCell>
+              <CTableHeaderCell>UTR Number</CTableHeaderCell>
+              <CTableHeaderCell>Method</CTableHeaderCell>
+              <CTableHeaderCell>Plan</CTableHeaderCell>
               <CTableHeaderCell>Date</CTableHeaderCell>
               <CTableHeaderCell>Status</CTableHeaderCell>
-              <CTableHeaderCell>Image</CTableHeaderCell>
-              <CTableHeaderCell>Remark</CTableHeaderCell>
               {/* <CTableHeaderCell>Action</CTableHeaderCell> */}
             </CTableRow>
           </CTableHead>
@@ -271,6 +258,9 @@ function TopupRejected() {
                   <CTableDataCell>{item.userId || "N/A"}</CTableDataCell>
                   <CTableDataCell>{item.name || "N/A"}</CTableDataCell>
                   <CTableDataCell>{item.amount || "N/A"}</CTableDataCell>
+                  <CTableDataCell>{item.transactionId || 'N/A'}</CTableDataCell>
+                  <CTableDataCell>{item.paymentMethod || 'N/A'}</CTableDataCell>
+                  <CTableDataCell>{item.plan?.name || item.planName || 'Wallet Credit'}</CTableDataCell>
                    <CTableDataCell>
                     {item.processedAt
                       ? new Date(item.processedAt).toLocaleString()
@@ -290,45 +280,6 @@ function TopupRejected() {
                       {item.status}
                     </span>
                   </CTableDataCell>
-                 
-
-
-                  {/* <CTableDataCell>{item.upiId || "N/A"}</CTableDataCell> */}
-                  {/* <CTableDataCell>{item.accountNumber || "N/A"}</CTableDataCell> */}
-                  {/* <CTableDataCell>{item.ifscCode || "N/A"}</CTableDataCell> */}
-                  {/* <CTableDataCell>{item.bankName || "N/A"}</CTableDataCell> */}
-                  <CTableDataCell>
-                    {item.screenshot ? (
-                      <img
-                        src={`${imgBaseUrl}/${normalizePath(item.screenshot)}`}
-                        alt="Passbook"
-                        style={{ width: '180px', height: '80px', objectFit: 'contain', borderRadius: '8px', cursor: 'pointer' }}
-                        onClick={() => {
-                          setSelectedImage(`${imgBaseUrl}/${normalizePath(item.screenshot)}`);
-                          setScreenshotModal(true);
-                        }}
-                      />
-                    ) : (
-                      'No Image'
-                    )}
-                  </CTableDataCell>
-                  {/* <CTableDataCell>
-                    {item.pancardPhoto ? (
-                      <img
-                        src={`${imgBaseUrl}/${normalizePath(item.pancardPhoto)}`}
-                        alt="Pancard"
-                        style={{ width: '180px', height: '80px', objectFit: 'contain', borderRadius: '8px', cursor: 'pointer' }}
-                        onClick={() => {
-                          setSelectedImage(`${imgBaseUrl}/${normalizePath(item.pancardPhoto)}`);
-                          setScreenshotModal(true);
-                        }}
-                      />
-                    ) : (
-                      'No Image'
-                    )}
-                  </CTableDataCell> */}
-
-                  <CTableDataCell>{item.remark || "Approved"}</CTableDataCell>
 
                   {/* ✅ Action buttons */}
                   {/* <CTableDataCell>
@@ -356,7 +307,7 @@ function TopupRejected() {
               ))
             ) : (
               <CTableRow>
-                <CTableDataCell colSpan="8" className="text-center text-muted">
+                <CTableDataCell colSpan="9" className="text-center text-muted">
                   No data found
                 </CTableDataCell>
               </CTableRow>
@@ -364,32 +315,6 @@ function TopupRejected() {
           </CTableBody>
         </CTable>
       </div>
-
-      {/* Modal for large image */}
-      <CModal
-        visible={screenshotModal}
-        onClose={() => setScreenshotModal(false)}
-        size="lg"
-      >
-        <CModalHeader>
-          <CModalTitle>Preview Image</CModalTitle>
-        </CModalHeader>
-        <CModalBody className="text-center">
-          {selectedImage && (
-            <img
-              src={selectedImage}
-              alt="Preview"
-              style={{ maxWidth: '100%', maxHeight: '80vh', borderRadius: '10px' }}
-            />
-          )}
-        </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" onClick={() => setScreenshotModal(false)}>
-            Close
-          </CButton>
-        </CModalFooter>
-      </CModal>
-
       {/* Pagination */}
       <div className="d-flex justify-content-between align-items-center mt-3">
         <div>

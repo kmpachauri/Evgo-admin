@@ -215,6 +215,7 @@ const PendingUsersWithFilter = () => {
     { key: 'userId', label: 'User Id' },
     { key: 'name', label: 'Name' },
     { key: 'phone', label: 'phone' },
+    { key: 'inviteCode', label: 'Referral Code' },
     { key: 'walletBalance', label: 'Wallet Balance' },
     { key: 'totalPlanAmount', label: 'Total Plan Amount' },
     { key: 'totalIncome', label: 'Total Income' },
@@ -287,6 +288,7 @@ const PendingUsersWithFilter = () => {
               <CTableHeaderCell>Plan Amount</CTableHeaderCell>
               <CTableHeaderCell>Total Income</CTableHeaderCell>
               <CTableHeaderCell>Today Income</CTableHeaderCell>
+              <CTableHeaderCell>Referral Code</CTableHeaderCell>
               <CTableHeaderCell>Sponsor</CTableHeaderCell>
               <CTableHeaderCell>Date</CTableHeaderCell>
               <CTableHeaderCell>Action</CTableHeaderCell>
@@ -313,6 +315,7 @@ const PendingUsersWithFilter = () => {
                     <CTableDataCell>₹{Number(user.totalPlanAmount || 0).toFixed(2)}</CTableDataCell>
                     <CTableDataCell>₹{Number(user.totalIncome || 0).toFixed(2)}</CTableDataCell>
                     <CTableDataCell>₹{Number(user.todayIncome || 0).toFixed(2)}</CTableDataCell>
+                    <CTableDataCell>{user.inviteCode || 'N/A'}</CTableDataCell>
                     <CTableDataCell>{user.sponsor || 'N/A'}</CTableDataCell>
                     <CTableDataCell>
                       {date.toLocaleDateString()} <br />

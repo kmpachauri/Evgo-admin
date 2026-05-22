@@ -168,6 +168,8 @@ const AllUsers = () => {
     { key: 'userId', label: 'User Id' },
     { key: 'name', label: 'Name' },
     { key: 'phone', label: 'phone' },
+    { key: 'sponsor', label: 'Sponsor' },
+    { key: 'inviteCode', label: 'Referral Code' },
     { key: 'status', label: 'status' },
     { key: 'walletBalance', label: 'walletBalance' },
     { key: 'totalPlanAmount', label: 'Total Plan Amount' },
@@ -238,22 +240,24 @@ const AllUsers = () => {
           </div>
         ) : (
           <>
-            <CTable striped bordered hover responsive>
+            <div className="table-responsive">
+            <CTable striped bordered hover responsive className="text-nowrap align-middle">
               <CTableHead color="primary">
                 <CTableRow>
                   <CTableHeaderCell>Sr. No</CTableHeaderCell>
                   <CTableHeaderCell>UserId</CTableHeaderCell>
                   <CTableHeaderCell>User Name</CTableHeaderCell>
                   <CTableHeaderCell>Phone</CTableHeaderCell>
+                  <CTableHeaderCell>Sponsor</CTableHeaderCell>
                   <CTableHeaderCell>Referral Code</CTableHeaderCell>
                   <CTableHeaderCell>Status</CTableHeaderCell>
                   <CTableHeaderCell>Wallet</CTableHeaderCell>
                   <CTableHeaderCell>Plan Amount</CTableHeaderCell>
                   <CTableHeaderCell>Total Income</CTableHeaderCell>
                   <CTableHeaderCell>Today Income</CTableHeaderCell>
+                  <CTableHeaderCell>Date</CTableHeaderCell>
                   <CTableHeaderCell>Action</CTableHeaderCell>
                   <CTableHeaderCell>Manage</CTableHeaderCell>
-                  <CTableHeaderCell>Date</CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
               <CTableBody>
@@ -263,6 +267,7 @@ const AllUsers = () => {
                     <CTableDataCell>{user.userId || 'N/A'}</CTableDataCell>
                     <CTableDataCell>{user.name || 'N/A'}</CTableDataCell>
                     <CTableDataCell>{user.phone || 'N/A'}</CTableDataCell>
+                    <CTableDataCell>{user.sponsor || 'N/A'}</CTableDataCell>
                     <CTableDataCell>
                       <span style={{ fontFamily: 'monospace', fontWeight: 600 }}>
                         {user.inviteCode || 'N/A'}
@@ -275,6 +280,18 @@ const AllUsers = () => {
                     <CTableDataCell>₹{Number(user.totalPlanAmount || 0).toFixed(2)}</CTableDataCell>
                     <CTableDataCell>₹{Number(user.totalIncome || 0).toFixed(2)}</CTableDataCell>
                     <CTableDataCell>₹{Number(user.todayIncome || 0).toFixed(2)}</CTableDataCell>
+                    <CTableDataCell>
+                      {user.createdAt ? (
+                        <>
+                          {new Date(user.createdAt).toLocaleDateString()} <br />
+                          <small className="text-muted">
+                            {new Date(user.createdAt).toLocaleTimeString()}
+                          </small>
+                        </>
+                      ) : (
+                        'N/A'
+                      )}
+                    </CTableDataCell>
                     <CTableDataCell className="d-flex gap-1 flex-wrap">
                       <CButton
                         size="sm"
@@ -313,22 +330,11 @@ const AllUsers = () => {
                         Manage
                       </CButton>
                     </CTableDataCell>
-                    <CTableDataCell>
-                      {user.createdAt ? (
-                        <>
-                          {new Date(user.createdAt).toLocaleDateString()} <br />
-                          <small className="text-muted">
-                            {new Date(user.createdAt).toLocaleTimeString()}
-                          </small>
-                        </>
-                      ) : (
-                        'N/A'
-                      )}
-                    </CTableDataCell>
                   </CTableRow>
                 ))}
               </CTableBody>
             </CTable>
+            </div>
 
             <CPagination align="center" className="mt-3 flex-wrap">
               {renderPagination()}

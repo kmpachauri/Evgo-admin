@@ -169,6 +169,8 @@ const ActiveUsers = () => {
     { key: "userId", label: "User Id" },
     { key: "name", label: "Name" },
     { key: "phone", label: "Phone" },
+    { key: "inviteCode", label: "Referral Code" },
+    { key: "sponsor", label: "Sponsor" },
     { key: "walletBalance", label: "Wallet Balance" },
     { key: "totalPlanAmount", label: "Total Plan Amount" },
     { key: "totalIncome", label: "Total Income" },
@@ -261,6 +263,7 @@ const ActiveUsers = () => {
                   <CTableHeaderCell>Plan Amount</CTableHeaderCell>
                   <CTableHeaderCell>Total Income</CTableHeaderCell>
                   <CTableHeaderCell>Today Income</CTableHeaderCell>
+                  <CTableHeaderCell>Referral Code</CTableHeaderCell>
                   <CTableHeaderCell>Sponsor</CTableHeaderCell>
                   <CTableHeaderCell>Date</CTableHeaderCell>
                   <CTableHeaderCell>Action</CTableHeaderCell>
@@ -287,6 +290,7 @@ const ActiveUsers = () => {
                       <CTableDataCell>₹{Number(user.totalPlanAmount || 0).toFixed(2)}</CTableDataCell>
                       <CTableDataCell>₹{Number(user.totalIncome || 0).toFixed(2)}</CTableDataCell>
                       <CTableDataCell>₹{Number(user.todayIncome || 0).toFixed(2)}</CTableDataCell>
+                      <CTableDataCell>{user.inviteCode || 'N/A'}</CTableDataCell>
                       <CTableDataCell>{user.sponsor || 'N/A'}</CTableDataCell>
                       <CTableDataCell>
                         {user.createdAt ? (

@@ -6,6 +6,7 @@ import {
   CCardHeader,
   CCol,
   CFormInput,
+  CFormSelect,
   CFormSwitch,
   CRow,
   CSpinner,
@@ -42,65 +43,20 @@ export default function Updateuser() {
   const [form, setForm] = useState(emptyForm)
   const [detail, setDetail] = useState(null)
   const [saving, setSaving] = useState(false)
+  const [rechargeLoading, setRechargeLoading] = useState(false)
+  const [deductLoading, setDeductLoading] = useState(false)
+  const [plans, setPlans] = useState([])
+  const [rechargeForm, setRechargeForm] = useState({
+    planId: '',
+    amount: '',
+    remark: '',
+  })
+  const [deductForm, setDeductForm] = useState({
+    amount: '',
+    remark: '',
+  })
 
-  useEffect(() => {
-    const loadDetail = async () => {
-      try {
-        const res = await fetchData({ url: apiRoutes.userDetail(userId) })
-        const data = res?.data || null
-        setDetail(data)
-        const sourceUser = data?.user || fallbackUser
-        if (sourceUser) {
-          setForm({
-            sponsor: sourceUser.sponsorUserId || sourceUser.sponsor || '',
-            userId: sourceUser.userId || '',
-            name: sourceUser.name || '',
-            phone: sourceUser.phone || '',
-            walletBalance: sourceUser.walletBalance || 0,
-            password: '',
-            isActivated: Boolean(sourceUser.isActivated),
-            totalInvested: sourceUser.totalAssets || sourceUser.totalInvested || 0,
-          })
-        }
-      } catch (error) {
-        toast.error(error?.message || 'Failed to fetch user detail')
-      }
-    }
-
-    loadDetail()
-  }, [userId])
-
-  const handleChange = (key, value) => {
-    setForm((prev) => ({ ...prev, [key]: value }))
-  }
-
-  const handleSubmit = async () => {
-    const payload = {
-      ...form,
-      walletBalance: Number(form.walletBalance || 0),
-      totalInvested: Number(form.totalInvested || 0),
-    }
-
-    setSaving(true)
-    try {
-      const res = await fetchData({
-        url: `/api/v1/admin/user/update-a-user/${userId}`,
-        method: 'PUT',
-        data: payload,
-      })
-
-      if (res.success) {
-        toast.success('User updated successfully')
-      }
-    } catch (error) {
-      toast.error(error?.message || 'Error while updating user')
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  const handleReset = () => {
-    const sourceUser = detail?.user || fallbackUser
+  const hydrateUserForm = (sourceUser) => {
     if (!sourceUser) return
 
     setForm({
@@ -115,7 +71,151 @@ export default function Updateuser() {
     })
   }
 
+  const loadDetail = async () => {
+    try {
+      const res = await fetchData({ url: apiRoutes.userDetail(userId) })
+      const data = res?.data || null
+      setDetail(data)
+      hydrateUserForm(data?.user || fallbackUser)
+    } catch (error) {
+      toast.error(error?.message || 'Failed to fetch user detail')
+    }
+  }
+
+  const loadPlans = async () => {
+    try {
+      const res = await fetchData({ url: apiRoutes.plans, method: 'GET' })
+      const rows = Array.isArray(res?.data) ? res.data : []
+      setPlans(
+        rows.filter((item) =>
+          String(item?.name || item?.code || '').trim().toLowerCase().startsWith('evgo'),
+        ),
+      )
+    } catch (error) {
+      toast.error(error?.message || 'Failed to fetch plans')
+    }
+  }
+
+  useEffect(() => {
+    loadDetail()
+    loadPlans()
+  }, [userId])
+
+  const handleChange = (key, value) => {
+    setForm((prev) => ({ ...prev, [key]: value }))
+  }
+
+  const handleRechargeFieldChange = (key, value) => {
+    if (key === 'planId') {
+      const chosenPlan = plans.find((item) => item._id === value)
+      setRechargeForm((prev) => ({
+        ...prev,
+        planId: value,
+        amount: chosenPlan ? String(chosenPlan.price) : '',
+      }))
+      return
+    }
+
+    setRechargeForm((prev) => ({ ...prev, [key]: value }))
+  }
+
+  const handleSubmit = async () => {
+    const payload = {
+      sponsor: form.sponsor,
+      userId: form.userId,
+      name: form.name,
+      phone: form.phone,
+      password: form.password,
+      isActivated: form.isActivated,
+    }
+
+    setSaving(true)
+    try {
+      const res = await fetchData({
+        url: `/api/v1/admin/user/update-a-user/${userId}`,
+        method: 'PUT',
+        data: payload,
+      })
+
+      if (res.success) {
+        toast.success('User updated successfully')
+        await loadDetail()
+      }
+    } catch (error) {
+      toast.error(error?.message || 'Error while updating user')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleReset = () => {
+    hydrateUserForm(detail?.user || fallbackUser)
+  }
+
+  const handleAddRecharge = async () => {
+    const numericAmount = Number(rechargeForm.amount || 0)
+    if (numericAmount <= 0) {
+      toast.error('Please enter a valid recharge amount')
+      return
+    }
+
+    setRechargeLoading(true)
+    try {
+      const res = await fetchData({
+        url: apiRoutes.addUserRecharge(userId),
+        method: 'POST',
+        data: {
+          planId: rechargeForm.planId || null,
+          amount: numericAmount,
+          remark: rechargeForm.remark,
+        },
+      })
+
+      if (res?.success) {
+        toast.success('Recharge added successfully')
+        setRechargeForm({ planId: '', amount: '', remark: '' })
+        await loadDetail()
+      }
+    } catch (error) {
+      toast.error(error?.message || 'Failed to add recharge')
+    } finally {
+      setRechargeLoading(false)
+    }
+  }
+
+  const handleDeductWallet = async () => {
+    const numericAmount = Number(deductForm.amount || 0)
+    if (numericAmount <= 0) {
+      toast.error('Please enter a valid deduction amount')
+      return
+    }
+
+    setDeductLoading(true)
+    try {
+      const res = await fetchData({
+        url: apiRoutes.deductUserWallet(userId),
+        method: 'POST',
+        data: {
+          amount: numericAmount,
+          remark: deductForm.remark,
+        },
+      })
+
+      if (res?.success) {
+        toast.success('Wallet amount deducted successfully')
+        setDeductForm({ amount: '', remark: '' })
+        await loadDetail()
+      }
+    } catch (error) {
+      toast.error(error?.message || 'Failed to deduct wallet balance')
+    } finally {
+      setDeductLoading(false)
+    }
+  }
+
   const user = detail?.user || fallbackUser
+  const isManualAdminDeduct = (item) =>
+    String(item?.remark || '').toLowerCase().includes('manual deduct by admin')
 
   return (
     <CRow>
@@ -152,26 +252,7 @@ export default function Updateuser() {
                 <CFormInput
                   label="Mobile"
                   value={form.phone}
-                  onChange={(e) => handleChange('phone', e.target.value)}
-                />
-              </CCol>
-            </CRow>
-
-            <CRow className="mb-3">
-              <CCol md={6}>
-                <CFormInput
-                  label="Wallet Balance"
-                  type="number"
-                  value={form.walletBalance}
-                  onChange={(e) => handleChange('walletBalance', e.target.value)}
-                />
-              </CCol>
-              <CCol md={6}>
-                <CFormInput
-                  label="Total Invested"
-                  type="number"
-                  value={form.totalInvested}
-                  onChange={(e) => handleChange('totalInvested', e.target.value)}
+                  disabled
                 />
               </CCol>
             </CRow>
@@ -207,6 +288,80 @@ export default function Updateuser() {
                 Back
               </CButton>
             </div>
+
+            <hr />
+
+            <CRow className="g-3">
+              <CCol xs={12}>
+                <strong>Add Recharge / Plan</strong>
+              </CCol>
+              <CCol md={6}>
+                <CFormSelect
+                  label="Select Plan"
+                  value={rechargeForm.planId}
+                  onChange={(e) => handleRechargeFieldChange('planId', e.target.value)}
+                >
+                  <option value="">Wallet Credit Only</option>
+                  {plans.map((plan) => (
+                    <option key={plan._id} value={plan._id}>
+                      {plan.name} - Rs {Number(plan.price || 0).toFixed(2)}
+                    </option>
+                  ))}
+                </CFormSelect>
+              </CCol>
+              <CCol md={6}>
+                <CFormInput
+                  label="Recharge Amount"
+                  type="number"
+                  value={rechargeForm.amount}
+                  onChange={(e) => handleRechargeFieldChange('amount', e.target.value)}
+                  placeholder="Enter recharge amount"
+                />
+              </CCol>
+              <CCol xs={12}>
+                <CFormInput
+                  label="Recharge Remark"
+                  value={rechargeForm.remark}
+                  onChange={(e) => handleRechargeFieldChange('remark', e.target.value)}
+                  placeholder="Optional admin remark"
+                />
+              </CCol>
+              <CCol xs={12}>
+                <CButton color="success" type="button" onClick={handleAddRecharge} disabled={rechargeLoading}>
+                  {rechargeLoading ? 'Processing...' : 'Add Recharge'}
+                </CButton>
+              </CCol>
+            </CRow>
+
+            <hr />
+
+            <CRow className="g-3">
+              <CCol xs={12}>
+                <strong>Deduct Wallet Amount</strong>
+              </CCol>
+              <CCol md={6}>
+                <CFormInput
+                  label="Deduct Amount"
+                  type="number"
+                  value={deductForm.amount}
+                  onChange={(e) => setDeductForm((prev) => ({ ...prev, amount: e.target.value }))}
+                  placeholder="Enter amount to deduct"
+                />
+              </CCol>
+              <CCol md={6}>
+                <CFormInput
+                  label="Deduct Remark"
+                  value={deductForm.remark}
+                  onChange={(e) => setDeductForm((prev) => ({ ...prev, remark: e.target.value }))}
+                  placeholder="Optional deduction reason"
+                />
+              </CCol>
+              <CCol xs={12}>
+                <CButton color="danger" type="button" onClick={handleDeductWallet} disabled={deductLoading}>
+                  {deductLoading ? 'Processing...' : 'Deduct Amount'}
+                </CButton>
+              </CCol>
+            </CRow>
           </CCardBody>
         </CCard>
       </CCol>
@@ -272,9 +427,7 @@ export default function Updateuser() {
                     {(detail?.plans || []).slice(0, 5).map((item) => (
                       <CTableRow key={item._id}>
                         <CTableDataCell>{item.planName}</CTableDataCell>
-                        <CTableDataCell>
-                          ₹{Number(item.purchaseAmount || 0).toFixed(2)}
-                        </CTableDataCell>
+                        <CTableDataCell>₹{Number(item.purchaseAmount || 0).toFixed(2)}</CTableDataCell>
                         <CTableDataCell className="text-capitalize">{item.status}</CTableDataCell>
                         <CTableDataCell>
                           {item.activatedAt
@@ -311,7 +464,11 @@ export default function Updateuser() {
                       .map((item) => (
                         <CTableRow key={item._id}>
                           <CTableDataCell>
-                            {item.utrNumber ? 'Recharge' : 'Withdrawal'}
+                            {item.utrNumber
+                              ? 'Recharge'
+                              : isManualAdminDeduct(item)
+                                ? 'Manual Deduct'
+                                : 'Withdrawal'}
                           </CTableDataCell>
                           <CTableDataCell>₹{Number(item.amount || 0).toFixed(2)}</CTableDataCell>
                           <CTableDataCell className="text-capitalize">{item.status}</CTableDataCell>
@@ -320,6 +477,40 @@ export default function Updateuser() {
                           </CTableDataCell>
                         </CTableRow>
                       ))}
+                  </CTableBody>
+                </CTable>
+              </CCardBody>
+            </CCard>
+          </CCol>
+
+          <CCol xs={12}>
+            <CCard className="mb-4">
+              <CCardHeader>
+                <strong>Recent Income History</strong>
+              </CCardHeader>
+              <CCardBody>
+                <CTable responsive striped>
+                  <CTableHead>
+                    <CTableRow>
+                      <CTableHeaderCell>Title</CTableHeaderCell>
+                      <CTableHeaderCell>Type</CTableHeaderCell>
+                      <CTableHeaderCell>Amount</CTableHeaderCell>
+                      <CTableHeaderCell>Date</CTableHeaderCell>
+                    </CTableRow>
+                  </CTableHead>
+                  <CTableBody>
+                    {(detail?.incomes || []).slice(0, 8).map((item) => (
+                      <CTableRow key={item._id}>
+                        <CTableDataCell>{item.title || '-'}</CTableDataCell>
+                        <CTableDataCell className="text-capitalize">
+                          {String(item.type || '').replaceAll('_', ' ')}
+                        </CTableDataCell>
+                        <CTableDataCell>₹{Number(item.amount || 0).toFixed(2)}</CTableDataCell>
+                        <CTableDataCell>
+                          {new Date(item.creditedAt || item.createdAt).toLocaleString('en-IN')}
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))}
                   </CTableBody>
                 </CTable>
               </CCardBody>

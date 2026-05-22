@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import {
+  CButton,
   CCard,
   CCardBody,
   CCardHeader,
   CCol,
+  CFormInput,
   CRow,
   CSpinner,
   CTable,
@@ -22,7 +24,13 @@ const LotteryHistory = () => {
   const { fetchData } = useAxios()
   const [loading, setLoading] = useState(true)
   const [rows, setRows] = useState([])
+  const [filteredRows, setFilteredRows] = useState([])
   const [summary, setSummary] = useState({ totalDistributed: 0, totalClaims: 0 })
+  const [filters, setFilters] = useState({
+    search: '',
+    from: '',
+    to: '',
+  })
 
   const loadHistory = async () => {
     try {
@@ -30,6 +38,7 @@ const LotteryHistory = () => {
       const res = await fetchData({ url: '/api/v1/admin/lottery/history' })
       if (res.success) {
         setRows(res.data.rows || [])
+        setFilteredRows(res.data.rows || [])
         setSummary(res.data.summary || { totalDistributed: 0, totalClaims: 0 })
       }
     } finally {
@@ -40,6 +49,37 @@ const LotteryHistory = () => {
   useEffect(() => {
     loadHistory()
   }, [])
+
+  const handleSearch = () => {
+    let nextRows = [...rows]
+
+    if (filters.search) {
+      const needle = filters.search.toLowerCase()
+      nextRows = nextRows.filter(
+        (item) =>
+          item.user?.userId?.toLowerCase().includes(needle) ||
+          item.user?.name?.toLowerCase().includes(needle) ||
+          item.sourceUser?.userId?.toLowerCase().includes(needle) ||
+          item.planName?.toLowerCase().includes(needle) ||
+          item.referenceNumber?.toLowerCase().includes(needle),
+      )
+    }
+
+    if (filters.from) {
+      nextRows = nextRows.filter((item) => new Date(item.rewardDate || item.createdAt) >= new Date(filters.from))
+    }
+
+    if (filters.to) {
+      nextRows = nextRows.filter((item) => new Date(item.rewardDate || item.createdAt) <= new Date(filters.to))
+    }
+
+    setFilteredRows(nextRows)
+  }
+
+  const handleReset = () => {
+    setFilters({ search: '', from: '', to: '' })
+    setFilteredRows(rows)
+  }
 
   if (loading) {
     return <div className="text-center p-5"><CSpinner color="primary" /></div>
@@ -55,6 +95,36 @@ const LotteryHistory = () => {
             <span className="ms-3">Claims: {summary.totalClaims}</span>
           </CCardHeader>
           <CCardBody>
+            <CRow className="mb-3">
+              <CCol md={3}>
+                <CFormInput
+                  label="Search"
+                  placeholder="Search history"
+                  value={filters.search}
+                  onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
+                />
+              </CCol>
+              <CCol md={3}>
+                <CFormInput
+                  type="date"
+                  label="From Date"
+                  value={filters.from}
+                  onChange={(e) => setFilters((prev) => ({ ...prev, from: e.target.value }))}
+                />
+              </CCol>
+              <CCol md={3}>
+                <CFormInput
+                  type="date"
+                  label="To Date"
+                  value={filters.to}
+                  onChange={(e) => setFilters((prev) => ({ ...prev, to: e.target.value }))}
+                />
+              </CCol>
+              <CCol md={3} className="d-flex align-items-end gap-2">
+                <CButton color="primary" onClick={handleSearch}>Search</CButton>
+                <CButton color="secondary" onClick={handleReset}>Reset</CButton>
+              </CCol>
+            </CRow>
             <CTable responsive striped hover>
               <CTableHead>
                 <CTableRow>
@@ -68,7 +138,7 @@ const LotteryHistory = () => {
                 </CTableRow>
               </CTableHead>
               <CTableBody>
-                {rows.map((item) => (
+                {filteredRows.map((item) => (
                   <CTableRow key={item._id}>
                     <CTableDataCell>{item.user?.userId}<br /><small>{item.user?.name}</small></CTableDataCell>
                     <CTableDataCell>{item.sourceUser?.userId || '-'}<br /><small>{item.sourceUser?.name || '-'}</small></CTableDataCell>

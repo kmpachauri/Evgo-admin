@@ -130,10 +130,10 @@ export default function Dashboard() {
     <CContainer fluid className="p-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h2 className="fw-bold mb-1" style={{ color: color.dark }}>
+          <h2 className="fw-bold mb-1" style={{ color: 'var(--cui-body-color)' }}>
             EVGO Admin Dashboard
           </h2>
-          <p className="text-muted mb-0">
+          <p className="mb-0" style={{ color: 'var(--cui-secondary-color)' }}>
             Welcome back, {user?.name || 'Admin'}. Monitor the MLM engine in real time.
           </p>
         </div>
