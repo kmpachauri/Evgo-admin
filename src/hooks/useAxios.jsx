@@ -1,17 +1,19 @@
 import { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
-import Cookies from 'js-cookie'
 import useAuth from './useAuth'
 import useToastHandler from './useToastHandler'
-export const loginUrl = 'https://admin.evgo.site'
 
-export const baseUrl = 'https://node.evgo.site'
-export const imgBaseUrl = 'https://node.evgo.site'
+const isDev = import.meta.env.DEV
 
-// export const loginUrl = 'https://dhantag.com'
+export const loginUrl =
+  import.meta.env.VITE_LOGIN_URL || 'https://dhantag.com'
 
-// export const baseUrl = 'http://localhost:5000'
-// export const imgBaseUrl = 'http://localhost:5000'
+export const baseUrl =
+  import.meta.env.VITE_API_BASE_URL ||
+  (isDev ? 'http://localhost:5000' : 'https://node.evgo.site')
+
+export const imgBaseUrl =
+  import.meta.env.VITE_IMAGE_BASE_URL || baseUrl
 
 const useAxios = (initialConfig = {}, options = {}) => {
   const { showToast } = useToastHandler()
