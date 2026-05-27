@@ -21,13 +21,15 @@ import {
 } from '@coreui/react'
 import useAxios from '../../hooks/useAxios'
 
+const DEFAULT_MULTI_USER_COUPON_LIMIT = 1000000
+
 const emptyForm = {
   id: '',
   code: '',
   rewardAmount: '',
   expiryDate: '',
   status: 'active',
-  usageLimit: 1,
+  usageLimit: DEFAULT_MULTI_USER_COUPON_LIMIT,
   singleUsePerUser: true,
   description: '',
 }
@@ -74,7 +76,7 @@ const CouponManagement = () => {
         rewardAmount: Number(form.rewardAmount || 0),
         expiryDate: form.expiryDate || null,
         status: form.status,
-        usageLimit: Number(form.usageLimit || 1),
+        usageLimit: Number(form.usageLimit || DEFAULT_MULTI_USER_COUPON_LIMIT),
         singleUsePerUser: Boolean(form.singleUsePerUser),
         description: form.description,
       }
